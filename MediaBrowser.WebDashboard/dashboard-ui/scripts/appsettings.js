@@ -38,15 +38,9 @@
                 update('chromecastBitrate', val);
             }
 
-            return parseInt(appStorage.getItem('chromecastBitrate') || '') || 3000000;
-        },
-        enableChromecastAc3: function (val) {
+            val = appStorage.getItem('chromecastBitrate');
 
-            if (val != null) {
-                update('enablechromecastac3', val.toString());
-            }
-
-            return appStorage.getItem('enablechromecastac3') == 'true';
+            return val ? parseInt(val) : null;
         },
         enableExternalPlayers: function (val) {
 
@@ -55,6 +49,24 @@
             }
 
             return appStorage.getItem('externalplayers') == 'true';
+        },
+        enableCinemaMode: function (val) {
+
+            if (val != null) {
+                update('enableCinemaMode', val.toString());
+            }
+
+            val = appStorage.getItem('enableCinemaMode');
+
+            if (val) {
+                return val != 'false';
+            }
+
+            if (browserInfo.mobile) {
+                return false;
+            }
+
+            return true;
         },
         enableFullScreen: function (val) {
 
@@ -95,7 +107,7 @@
                 update('displayLanguage', val);
             }
 
-            return appStorage.getItem('displayLanguage') || 'en-US';
+            return appStorage.getItem('displayLanguage') || navigator.language || navigator.userLanguage || 'en-US';
         },
 
         cameraUploadServers: function (val) {

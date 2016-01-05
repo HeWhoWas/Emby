@@ -167,7 +167,7 @@
 
     function playInternalPostMediaSourceSelection(item, mediaSource, startPosition, deferred) {
 
-        Dashboard.hideModalLoadingMsg();
+        Dashboard.hideLoadingMsg();
 
         currentItem = item;
         currentMediaSource = mediaSource;
@@ -178,7 +178,7 @@
             }
         };
 
-        MediaPlayer.createStreamInfo('Video', item, mediaSource, startPosition).done(function (streamInfo) {
+        MediaPlayer.createStreamInfo('Video', item, mediaSource, startPosition).then(function (streamInfo) {
 
             var currentSrc = streamInfo.url;
 
@@ -383,7 +383,7 @@
 
                 $('.sliderValue', elem).html(tooltext);
 
-                Logger.log("slidin", pct, self.currentDurationTicks, time);
+                console.log("slidin", pct, self.currentDurationTicks, time);
 
             });
         });
@@ -435,9 +435,9 @@
 
         var userId = Dashboard.getCurrentUserId();
 
-        ApiClient.getItem(userId, itemId).done(function (item) {
+        ApiClient.getItem(userId, itemId).then(function (item) {
 
-            getVideoStreamInfo(item).done(function (streamInfo) {
+            getVideoStreamInfo(item).then(function (streamInfo) {
 
                 setTimeout(function () {
                     ExternalPlayer.showPlayerSelectionMenu(item, streamInfo.url, streamInfo.mimeType);
@@ -460,7 +460,7 @@
 
     function showPlayerSelectionMenu(item, url, mimeType) {
 
-        ExternalPlayer.getExternalPlayers(url, mimeType).done(function (players) {
+        ExternalPlayer.getExternalPlayers(url, mimeType).then(function (players) {
             showMenuForItem(item, players);
         });
     }

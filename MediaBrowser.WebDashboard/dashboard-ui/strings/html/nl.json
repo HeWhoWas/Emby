@@ -1,4 +1,6 @@
 {
+    "OptionSmartSubtitles": "Smart",
+    "OptionSmartSubtitlesHelp": "Subtitles matching the language preference will be loaded when the audio is in a foreign language.",
     "LabelExit": "Afsluiten",
     "LabelVisitCommunity": "Bezoek Gemeenschap",
     "LabelGithub": "Github",
@@ -75,7 +77,6 @@
     "ButtonConfigurePinCode": "Configureer pincode",
     "HeaderAdultsReadHere": "Volwassenen Lees hier!",
     "RegisterWithPayPal": "Registreer met PayPal",
-    "HeaderSyncRequiresSupporterMembership": "Synchroniseren vereist een Supporter Lidmaatschap",
     "HeaderEnjoyDayTrial": "Geniet van een 14-daagse gratis proefversie",
     "LabelSyncTempPath": "Pad voor tijdelijke bestanden:",
     "LabelSyncTempPathHelp": "Geef een afwijkende sync werk directory op. Tijdens het sync proces aangemaakte geconverteerde media zal hier opgeslagen worden.",
@@ -102,7 +103,7 @@
     "FolderTypeInherit": "overerven",
     "LabelContentType": "Inhoud type:",
     "TitleScheduledTasks": "Geplande Taken",
-    "HeaderSetupLibrary": "Stel uw mediabibliotheek in",
+    "HeaderSetupLibrary": "Stel uw mediabibliotheken in",
     "ButtonAddMediaFolder": "Mediamap toevoegen",
     "LabelFolderType": "Maptype:",
     "ReferToMediaLibraryWiki": "Raadpleeg de mediabibliotheek wiki.",
@@ -1293,7 +1294,7 @@
     "OptionUpcomingStreamingMovies": "Inclusief trailers van nieuwe en aankomende films op Netflix",
     "LabelDisplayTrailersWithinMovieSuggestions": "Toon trailers binnen film suggesties",
     "LabelDisplayTrailersWithinMovieSuggestionsHelp": "Vereist installatie van het Trailer-kanaal.",
-    "CinemaModeConfigurationHelp2": "Gebruikers kunnen in hun eigen instellingen Cinema Mode uitschakelen",
+    "CinemaModeConfigurationHelp2": "Emby apps hebben een instelling om de cinema mode in- of uit te schakelen. TV-apps schakelen cinema modus standaard in.",
     "LabelEnableCinemaMode": "Cinema Mode inschakelen",
     "HeaderCinemaMode": "Cinema Mode",
     "LabelDateAddedBehavior": "Datum toegevoegd gedrag voor nieuwe content:",
@@ -1513,8 +1514,8 @@
     "OptionEnableVideoFrameAnalysis": "Frame voor frame video-analyse inschakelen",
     "OptionEnableVideoFrameAnalysisHelp": "Extraheer informatie over video die gebruikt kan worden om transcodering zo effici\u00ebnt mogelijk te maken. Dit zal leiden tot langer durende bibliotheek scans .",
     "LabelVideoFrameAnalysisLimit": "Beperk frame voor frame analyse voor video's kleiner dan:",
-    "LabelHardwareVideoDecoder": "Hardware video decoder:",
-    "LabelHardwareVideoDecoderHelp": "Alleen beschikbaar op ondersteunde systemen.",
+    "LabelHardwareAccelerationType": "Hardware acceleratie:",
+    "LabelHardwareAccelerationTypeHelp": "Alleen beschikbaar op ondersteunde systemen.",
     "ButtonServerDashboard": "Server Dashboard",
     "HeaderAdmin": "Beheerder",
     "ButtonSignOut": "Afmelden",
@@ -1524,5 +1525,7 @@
     "ButtonEditImages": "Bewerk afbeeldingen",
     "LabelFolder": "Map:",
     "HeadersFolders": "Mappen",
-    "LabelDisplayName": "Weergave naam:"
+    "LabelDisplayName": "Weergave naam:",
+    "HeaderNewRecording": "New Recording",
+    "ButtonAdvanced": "Geavanceerd"
 }

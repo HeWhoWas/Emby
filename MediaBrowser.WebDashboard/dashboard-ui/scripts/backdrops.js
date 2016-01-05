@@ -48,7 +48,7 @@
 
         if (data) {
 
-            Logger.log('Found backdrop id list in cache. Key: ' + key)
+            console.log('Found backdrop id list in cache. Key: ' + key)
             data = JSON.parse(data);
             deferred.resolveWith(null, [data]);
         } else {
@@ -64,7 +64,7 @@
                 ParentId: parentId
             };
 
-            apiClient.getItems(Dashboard.getCurrentUserId(), options).done(function (result) {
+            apiClient.getItems(Dashboard.getCurrentUserId(), options).then(function (result) {
 
                 var images = result.Items.map(function (i) {
                     return {
@@ -99,7 +99,7 @@
             return;
         }
 
-        getBackdropItemIds(apiClient, Dashboard.getCurrentUserId(), type, parentId).done(function (images) {
+        getBackdropItemIds(apiClient, Dashboard.getCurrentUserId(), type, parentId).then(function (images) {
 
             if (images.length) {
 

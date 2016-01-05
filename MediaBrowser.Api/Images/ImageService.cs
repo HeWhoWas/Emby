@@ -1,5 +1,4 @@
 ﻿using MediaBrowser.Common.Extensions;
-using MediaBrowser.Common.IO;
 using MediaBrowser.Controller.Drawing;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Library;
@@ -18,7 +17,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommonIO;
-using MimeTypes = MediaBrowser.Model.Net.MimeTypes;
 
 namespace MediaBrowser.Api.Images
 {
@@ -639,7 +637,11 @@ namespace MediaBrowser.Api.Images
                 ResponseHeaders = headers,
                 ContentType = imageResult.Item2,
                 IsHeadRequest = isHeadRequest,
-                Path = imageResult.Item1
+                Path = imageResult.Item1,
+
+                // Sometimes imagemagick keeps a hold on the file briefly even after it's done writing to it.
+                // I'd rather do this than add a delay after saving the file
+                FileShare = FileShare.ReadWrite
             });
         }
 
@@ -700,10 +702,21 @@ namespace MediaBrowser.Api.Images
 
             var userAgent = Request.UserAgent ?? string.Empty;
 
-            if (userAgent.IndexOf("crosswalk", StringComparison.OrdinalIgnoreCase) != -1 &&
-                userAgent.IndexOf("android", StringComparison.OrdinalIgnoreCase) != -1)
+            if (!supportsWebP)
             {
-                supportsWebP = true;
+                if (string.Equals(Request.QueryString["accept"], "webp", StringComparison.OrdinalIgnoreCase))
+                {
+                    supportsWebP = true;
+                }
+            }
+
+            if (!supportsWebP)
+            {
+                if (userAgent.IndexOf("crosswalk", StringComparison.OrdinalIgnoreCase) != -1 &&
+                    userAgent.IndexOf("android", StringComparison.OrdinalIgnoreCase) != -1)
+                {
+                    supportsWebP = true;
+                }
             }
 
             if (supportsWebP)

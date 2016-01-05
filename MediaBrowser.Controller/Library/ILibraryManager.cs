@@ -298,7 +298,7 @@ namespace MediaBrowser.Controller.Library
         /// </summary>
         /// <param name="paths">The paths.</param>
         /// <returns>IEnumerable{System.String}.</returns>
-        IEnumerable<string> NormalizeRootPathList(IEnumerable<string> paths);
+        IEnumerable<FileSystemMetadata> NormalizeRootPathList(IEnumerable<FileSystemMetadata> paths);
 
         /// <summary>
         /// Registers the item.
@@ -337,7 +337,6 @@ namespace MediaBrowser.Controller.Library
             string parentId,
             string viewType, 
             string sortName, 
-            string uniqueId,
             CancellationToken cancellationToken);
 
         /// <summary>
@@ -391,13 +390,11 @@ namespace MediaBrowser.Controller.Library
         /// <param name="parent">The parent.</param>
         /// <param name="viewType">Type of the view.</param>
         /// <param name="sortName">Name of the sort.</param>
-        /// <param name="uniqueId">The unique identifier.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task&lt;UserView&gt;.</returns>
         Task<UserView> GetShadowView(BaseItem parent,
           string viewType,
           string sortName,
-          string uniqueId,
           CancellationToken cancellationToken);
         
         /// <summary>
@@ -548,10 +545,9 @@ namespace MediaBrowser.Controller.Library
         /// Gets the items.
         /// </summary>
         /// <param name="query">The query.</param>
-        /// <param name="user">The user.</param>
         /// <param name="parentIds">The parent ids.</param>
         /// <returns>List&lt;BaseItem&gt;.</returns>
-        IEnumerable<BaseItem> GetItems(InternalItemsQuery query, User user, IEnumerable<string> parentIds);
+        IEnumerable<BaseItem> GetItems(InternalItemsQuery query, IEnumerable<string> parentIds);
 
         /// <summary>
         /// Gets the items result.

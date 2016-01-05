@@ -21,7 +21,7 @@ namespace MediaBrowser.Common.Implementations.Security
     public class PluginSecurityManager : ISecurityManager
     {
         private const string MBValidateUrl = MbAdmin.HttpsUrl + "service/registration/validate";
-        private const string AppstoreRegUrl = /*MbAdmin.HttpsUrl*/ "http://mb3admin.com/admin/" + "service/appstore/register";
+        private const string AppstoreRegUrl = /*MbAdmin.HttpsUrl*/ "http://mb3admin.com/admin/service/appstore/register";
 
         /// <summary>
         /// The _is MB supporter
@@ -150,42 +150,6 @@ namespace MediaBrowser.Common.Implementations.Security
                     // re-load registration info
                     Task.Run(() => LoadAllRegistrationInfo());
                 }
-            }
-        }
-
-        public async Task<SupporterInfo> GetSupporterInfo()
-        {
-            var key = SupporterKey;
-
-            if (string.IsNullOrWhiteSpace(key))
-            {
-                return new SupporterInfo();
-            }
-
-            var data = new Dictionary<string, string>
-                {
-                    { "key", key }, 
-                };
-
-            var url = MbAdmin.HttpsUrl + "/service/supporter/retrieve";
-
-            using (var stream = await _httpClient.Post(url, data, CancellationToken.None).ConfigureAwait(false))
-            {
-                var response = _jsonSerializer.DeserializeFromStream<SuppporterInfoResponse>(stream);
-
-                var info = new SupporterInfo
-                {
-                    Email = response.email,
-                    PlanType = response.planType,
-                    SupporterKey = response.supporterKey,
-                    ExpirationDate = string.IsNullOrWhiteSpace(response.expDate) ? (DateTime?)null : DateTime.Parse(response.expDate),
-                    RegistrationDate = DateTime.Parse(response.regDate),
-                    IsActiveSupporter = IsMBSupporter
-                };
-
-                info.IsExpiredSupporter = info.ExpirationDate.HasValue && info.ExpirationDate < DateTime.UtcNow && !string.IsNullOrWhiteSpace(info.SupporterKey);
-
-                return info;
             }
         }
 

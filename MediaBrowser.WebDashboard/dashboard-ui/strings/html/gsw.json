@@ -1,4 +1,6 @@
 {
+    "OptionSmartSubtitles": "Smart",
+    "OptionSmartSubtitlesHelp": "Subtitles matching the language preference will be loaded when the audio is in a foreign language.",
     "LabelExit": "Verlasse",
     "LabelVisitCommunity": "Bsuech d'Community",
     "LabelGithub": "Github",
@@ -75,7 +77,6 @@
     "ButtonConfigurePinCode": "Konfigurier de Pin Code",
     "HeaderAdultsReadHere": "Erwachseni bitte do lese!",
     "RegisterWithPayPal": "Registrier di mit PayPal",
-    "HeaderSyncRequiresSupporterMembership": "Sync Requires a Supporter Membership",
     "HeaderEnjoyDayTrial": "Gn\u00fcss diin 14-T\u00e4g gratis Ziit zum teste",
     "LabelSyncTempPath": "Pfad f\u00f6r tempor\u00e4ri Date:",
     "LabelSyncTempPathHelp": "Gib en eigene Arbetsordner f\u00f6r d'Synchronisierig a. Konvertierti Medie werded w\u00e4hrend em Sync-Prozess det gspeichered.",
@@ -102,7 +103,7 @@
     "FolderTypeInherit": "erbf\u00e4hig",
     "LabelContentType": "Date Art:",
     "TitleScheduledTasks": "Planti Ufgabe",
-    "HeaderSetupLibrary": "Stell diini Mediebibliothek i",
+    "HeaderSetupLibrary": "Setup your media libraries",
     "ButtonAddMediaFolder": "F\u00fceg en Medieordner dezue.",
     "LabelFolderType": "Ordner Art:",
     "ReferToMediaLibraryWiki": "Lueg im Wiki f\u00f6r Mediebiblithek noh.",
@@ -1293,7 +1294,7 @@
     "OptionUpcomingStreamingMovies": "Include trailers from new and upcoming movies on Netflix",
     "LabelDisplayTrailersWithinMovieSuggestions": "Display trailers within movie suggestions",
     "LabelDisplayTrailersWithinMovieSuggestionsHelp": "Requires installation of the Trailer channel.",
-    "CinemaModeConfigurationHelp2": "Individual users will have the ability to disable cinema mode within their own preferences.",
+    "CinemaModeConfigurationHelp2": "Emby apps will have a setting to enable or disable cinema mode. TV apps enable cinema mode by default.",
     "LabelEnableCinemaMode": "Enable cinema mode",
     "HeaderCinemaMode": "Cinema Mode",
     "LabelDateAddedBehavior": "Date added behavior for new content:",
@@ -1513,8 +1514,8 @@
     "OptionEnableVideoFrameAnalysis": "Enable frame by frame video analysis",
     "OptionEnableVideoFrameAnalysisHelp": "Extract detailed information about videos that can be used to make transcoding as efficient as possible. This will cause library scans to take longer.",
     "LabelVideoFrameAnalysisLimit": "Limit frame by frame analysis to videos less than:",
-    "LabelHardwareVideoDecoder": "Hardware video decoder:",
-    "LabelHardwareVideoDecoderHelp": "Available on supported systems only.",
+    "LabelHardwareAccelerationType": "Hardware acceleration:",
+    "LabelHardwareAccelerationTypeHelp": "Available on supported systems only.",
     "ButtonServerDashboard": "Server Dashboard",
     "HeaderAdmin": "Admin",
     "ButtonSignOut": "Sign out",
@@ -1524,5 +1525,7 @@
     "ButtonEditImages": "Edit Images",
     "LabelFolder": "Folder:",
     "HeadersFolders": "Folders",
-    "LabelDisplayName": "Display name:"
+    "LabelDisplayName": "Display name:",
+    "HeaderNewRecording": "New Recording",
+    "ButtonAdvanced": "Advanced"
 }

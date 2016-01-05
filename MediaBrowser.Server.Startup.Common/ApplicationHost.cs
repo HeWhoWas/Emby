@@ -91,14 +91,17 @@ using MediaBrowser.Server.Startup.Common.Migrations;
 using MediaBrowser.WebDashboard.Api;
 using MediaBrowser.XbmcMetadata.Providers;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using CommonIO;
+using MediaBrowser.Common.Implementations.Updates;
 
 namespace MediaBrowser.Server.Startup.Common
 {
@@ -204,9 +207,10 @@ namespace MediaBrowser.Server.Startup.Common
         private IPlaylistManager PlaylistManager { get; set; }
 
         private readonly StartupOptions _startupOptions;
-        private readonly string _remotePackageName;
+        private readonly string _releaseAssetFilename;
 
         internal INativeApp NativeApp { get; set; }
+        private Timer _ipAddressCacheTimer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ApplicationHost" /> class.
@@ -215,21 +219,23 @@ namespace MediaBrowser.Server.Startup.Common
         /// <param name="logManager">The log manager.</param>
         /// <param name="options">The options.</param>
         /// <param name="fileSystem">The file system.</param>
-        /// <param name="remotePackageName">Name of the remote package.</param>
+        /// <param name="releaseAssetFilename">The release asset filename.</param>
         /// <param name="nativeApp">The native application.</param>
         public ApplicationHost(ServerApplicationPaths applicationPaths,
             ILogManager logManager,
             StartupOptions options,
             IFileSystem fileSystem,
-            string remotePackageName,
+            string releaseAssetFilename,
             INativeApp nativeApp)
             : base(applicationPaths, logManager, fileSystem)
         {
             _startupOptions = options;
-            _remotePackageName = remotePackageName;
+            _releaseAssetFilename = releaseAssetFilename;
             NativeApp = nativeApp;
 
             SetBaseExceptionMessage();
+
+            _ipAddressCacheTimer = new Timer(OnCacheClearTimerFired, null, TimeSpan.FromMinutes(3), TimeSpan.FromMinutes(3));
         }
 
         private Version _version;
@@ -316,6 +322,7 @@ namespace MediaBrowser.Server.Startup.Common
         {
             await base.RunStartupTasks().ConfigureAwait(false);
 
+            Logger.Info("ServerId: {0}", SystemId);
             Logger.Info("Core startup complete");
             HttpServer.GlobalResponse = null;
 
@@ -419,7 +426,7 @@ namespace MediaBrowser.Server.Startup.Common
             UserManager = new UserManager(LogManager.GetLogger("UserManager"), ServerConfigurationManager, UserRepository, XmlSerializer, NetworkManager, () => ImageProcessor, () => DtoService, () => ConnectManager, this, JsonSerializer, FileSystemManager);
             RegisterSingleInstance(UserManager);
 
-            LibraryManager = new LibraryManager(Logger, TaskManager, UserManager, ServerConfigurationManager, UserDataManager, () => LibraryMonitor, FileSystemManager, () => ProviderManager);
+            LibraryManager = new LibraryManager(Logger, TaskManager, UserManager, ServerConfigurationManager, UserDataManager, () => LibraryMonitor, FileSystemManager, () => ProviderManager, () => UserViewManager);
             RegisterSingleInstance(LibraryManager);
 
             var musicManager = new MusicManager(LibraryManager);
@@ -436,7 +443,7 @@ namespace MediaBrowser.Server.Startup.Common
 
             RegisterSingleInstance<ISearchEngine>(() => new SearchEngine(LogManager, LibraryManager, UserManager));
 
-            HttpServer = ServerFactory.CreateServer(this, LogManager, ServerConfigurationManager, "Emby", "web/index.html");
+            HttpServer = ServerFactory.CreateServer(this, LogManager, ServerConfigurationManager, NetworkManager, "Emby", "web/index.html");
             HttpServer.GlobalResponse = LocalizationManager.GetLocalizedString("StartupEmbyServerIsLoading");
             RegisterSingleInstance(HttpServer, false);
             progress.Report(10);
@@ -503,7 +510,7 @@ namespace MediaBrowser.Server.Startup.Common
             UserViewManager = new UserViewManager(LibraryManager, LocalizationManager, UserManager, ChannelManager, LiveTvManager, ServerConfigurationManager);
             RegisterSingleInstance(UserViewManager);
 
-            var contentDirectory = new ContentDirectory(dlnaManager, UserDataManager, ImageProcessor, LibraryManager, ServerConfigurationManager, UserManager, LogManager.GetLogger("UpnpContentDirectory"), HttpClient, LocalizationManager, ChannelManager, MediaSourceManager);
+            var contentDirectory = new ContentDirectory(dlnaManager, UserDataManager, ImageProcessor, LibraryManager, ServerConfigurationManager, UserManager, LogManager.GetLogger("UpnpContentDirectory"), HttpClient, LocalizationManager, ChannelManager, MediaSourceManager, UserViewManager);
             RegisterSingleInstance<IContentDirectory>(contentDirectory);
 
             var mediaRegistrar = new MediaReceiverRegistrar(LogManager.GetLogger("MediaReceiverRegistrar"), HttpClient, ServerConfigurationManager);
@@ -1116,14 +1123,14 @@ namespace MediaBrowser.Server.Startup.Common
                 try
                 {
                     // Return the first matched address, if found, or the first known local address
-                    var address = LocalIpAddress;
+                    var address = LocalIpAddresses.FirstOrDefault(i => !IPAddress.IsLoopback(i));
 
-                    if (!string.IsNullOrWhiteSpace(address))
+                    if (address != null)
                     {
-                        address = GetLocalApiUrl(address);
+                        return GetLocalApiUrl(address.ToString());
                     }
 
-                    return address;
+                    return null;
                 }
                 catch (Exception ex)
                 {
@@ -1141,38 +1148,69 @@ namespace MediaBrowser.Server.Startup.Common
                 HttpPort.ToString(CultureInfo.InvariantCulture));
         }
 
-        public string LocalIpAddress
-        {
-            get
-            {
-                return HttpServerIpAddresses.FirstOrDefault();
-            }
-        }
-
-        private IEnumerable<string> HttpServerIpAddresses
+        public List<IPAddress> LocalIpAddresses
         {
             get
             {
                 var localAddresses = NetworkManager.GetLocalIpAddresses()
+                    .Where(IsIpAddressValid)
                     .ToList();
 
-                var httpServerAddresses = HttpServer.LocalEndPoints
-                    .Select(i => i.Split(':').FirstOrDefault())
-                    .Where(i => !string.IsNullOrEmpty(i))
-                    .ToList();
-
-                // Cross-check the local ip addresses with addresses that have been received on with the http server
-                var matchedAddresses = httpServerAddresses
-                    .Where(i => localAddresses.Contains(i, StringComparer.OrdinalIgnoreCase))
-                    .ToList();
-
-                if (matchedAddresses.Count == 0)
-                {
-                    return localAddresses;
-                }
-
-                return matchedAddresses;
+                return localAddresses;
             }
+        }
+
+        private readonly ConcurrentDictionary<string, bool> _validAddressResults = new ConcurrentDictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+        private bool IsIpAddressValid(IPAddress address)
+        {
+            if (IPAddress.IsLoopback(address))
+            {
+                return true;
+            }
+
+            var apiUrl = GetLocalApiUrl(address.ToString());
+            apiUrl += "/system/ping";
+
+            bool cachedResult;
+            if (_validAddressResults.TryGetValue(apiUrl, out cachedResult))
+            {
+                return cachedResult;
+            }
+
+            try
+            {
+                using (var response = HttpClient.SendAsync(new HttpRequestOptions
+                {
+                    Url = apiUrl,
+                    LogErrorResponseBody = false,
+                    LogErrors = false,
+                    LogRequest = false
+
+                }, "POST").Result)
+                {
+                    using (var reader = new StreamReader(response.Content))
+                    {
+                        var result = reader.ReadToEnd();
+                        var valid = string.Equals(Name, result, StringComparison.OrdinalIgnoreCase);
+
+                        _validAddressResults.AddOrUpdate(apiUrl, valid, (k, v) => valid);
+                        Logger.Debug("Ping test result to {0}. Success: {1}", apiUrl, valid);
+                        return valid;
+                    }
+                }
+            }
+            catch
+            {
+                Logger.Debug("Ping test result to {0}. Success: {1}", apiUrl, false);
+
+                _validAddressResults.AddOrUpdate(apiUrl, false, (k, v) => false);
+                return false;
+            }
+        }
+
+        private void OnCacheClearTimerFired(object state)
+        {
+            _validAddressResults.Clear();
         }
 
         public string FriendlyName
@@ -1269,28 +1307,22 @@ namespace MediaBrowser.Server.Startup.Common
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="progress">The progress.</param>
         /// <returns>Task{CheckForUpdateResult}.</returns>
-        public override async Task<CheckForUpdateResult> CheckForApplicationUpdate(CancellationToken cancellationToken, IProgress<double> progress)
+        public override Task<CheckForUpdateResult> CheckForApplicationUpdate(CancellationToken cancellationToken, IProgress<double> progress)
         {
-            var availablePackages = await InstallationManager.GetAvailablePackagesWithoutRegistrationInfo(cancellationToken).ConfigureAwait(false);
+            var cacheLength = TimeSpan.FromHours(12);
+            var updateLevel = ConfigurationManager.CommonConfiguration.SystemUpdateLevel;
 
-            var version = InstallationManager.GetLatestCompatibleVersion(availablePackages, _remotePackageName, null, ApplicationVersion, ConfigurationManager.CommonConfiguration.SystemUpdateLevel);
-
-            var versionObject = version == null || string.IsNullOrWhiteSpace(version.versionStr) ? null : new Version(version.versionStr);
-
-            var isUpdateAvailable = versionObject != null && versionObject > ApplicationVersion;
-
-            var result = versionObject != null ?
-                new CheckForUpdateResult { AvailableVersion = versionObject.ToString(), IsUpdateAvailable = isUpdateAvailable, Package = version } :
-                new CheckForUpdateResult { AvailableVersion = ApplicationVersion.ToString(), IsUpdateAvailable = false };
-
-            HasUpdateAvailable = result.IsUpdateAvailable;
-
-            if (result.IsUpdateAvailable)
+            if (updateLevel == PackageVersionClass.Beta)
             {
-                Logger.Info("New application version is available: {0}", result.AvailableVersion);
+                cacheLength = TimeSpan.FromHours(1);
+            }
+            else if (updateLevel == PackageVersionClass.Dev)
+            {
+                cacheLength = TimeSpan.FromMinutes(5);
             }
 
-            return result;
+            return new GithubUpdater(HttpClient, JsonSerializer, cacheLength).CheckForUpdateResult("MediaBrowser", "Emby", ApplicationVersion, updateLevel, _releaseAssetFilename,
+                    "MBServer", "Mbserver.zip", cancellationToken);
         }
 
         /// <summary>
@@ -1302,7 +1334,7 @@ namespace MediaBrowser.Server.Startup.Common
         /// <returns>Task.</returns>
         public override async Task UpdateApplication(PackageVersionInfo package, CancellationToken cancellationToken, IProgress<double> progress)
         {
-            await InstallationManager.InstallPackage(package, progress, cancellationToken).ConfigureAwait(false);
+            await InstallationManager.InstallPackage(package, false, progress, cancellationToken).ConfigureAwait(false);
 
             HasUpdateAvailable = false;
 

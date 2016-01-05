@@ -545,7 +545,13 @@
         var item = state.NowPlayingItem;
         var displayName = item ? MediaController.getNowPlayingNameHtml(item).replace('<br/>', ' - ') : '';
 
-        $('.nowPlayingPageTitle', page).html(displayName).visible(displayName.length > 0);
+        $('.nowPlayingPageTitle', page).html(displayName);
+
+        if (displayName.length > 0) {
+            $('.nowPlayingPageTitle', page).removeClass('hide');
+        } else {
+            $('.nowPlayingPageTitle', page).addClass('hide');
+        }
 
         var url;
         var backdropUrl = null;
@@ -599,12 +605,12 @@
 
             // This should be outside of the IF
             // But for now, if you change songs but keep the same artist, the backdrop will flicker because in-between songs it clears out the image
-            if (!$.browser.safari) {
-                // Exclude from safari because it just doesn't perform well
+            if (!browserInfo.mobile) {
+                // Exclude from mobile because it just doesn't perform well
                 Backdrops.setBackdropUrl(page, backdropUrl);
             }
 
-            ApiClient.getItem(Dashboard.getCurrentUserId(), item.Id).done(function (fullItem) {
+            ApiClient.getItem(Dashboard.getCurrentUserId(), item.Id).then(function (fullItem) {
                 page.querySelector('.nowPlayingPageUserDataButtons').innerHTML = LibraryBrowser.getUserDataIconsHtml(fullItem, false);
             });
         } else {
@@ -631,11 +637,11 @@
 
         if (currentPlayer) {
 
-            $(currentPlayer).off('playbackstart', onPlaybackStart)
-                .off('playbackstop', onPlaybackStopped)
-                .off('volumechange', onStateChanged)
-                .off('playstatechange', onStateChanged)
-                .off('positionchange', onStateChanged);
+            Events.off(currentPlayer, 'playbackstart', onPlaybackStart);
+            Events.off(currentPlayer, 'playbackstop', onPlaybackStopped);
+            Events.off(currentPlayer, 'volumechange', onStateChanged);
+            Events.off(currentPlayer, 'playstatechange', onStateChanged);
+            Events.off(currentPlayer, 'positionchange', onStateChanged);
 
             currentPlayer.endPlayerUpdates();
             currentPlayer = null;
@@ -648,7 +654,7 @@
 
         currentPlayer = player;
 
-        player.getPlayerState().done(function (state) {
+        player.getPlayerState().then(function (state) {
 
             if (state.NowPlayingItem) {
                 player.beginPlayerUpdates();
@@ -657,11 +663,11 @@
             onStateChanged.call(player, { type: 'init' }, state);
         });
 
-        $(player).on('playbackstart', onPlaybackStart)
-            .on('playbackstop', onPlaybackStopped)
-            .on('volumechange', onStateChanged)
-            .on('playstatechange', onStateChanged)
-            .on('positionchange', onStateChanged);
+        Events.on(player, 'playbackstart', onPlaybackStart);
+        Events.on(player, 'playbackstop', onPlaybackStopped);
+        Events.on(player, 'volumechange', onStateChanged);
+        Events.on(player, 'playstatechange', onStateChanged);
+        Events.on(player, 'positionchange', onStateChanged);
 
         var playerInfo = MediaController.getPlayerInfo();
 
@@ -686,14 +692,14 @@
         //    EnableImageTypes: "Primary,Backdrop,Banner,Thumb",
         //    Limit: 100
 
-        //}).done(function (result) {
+        //}).then(function (result) {
 
         //    html += LibraryBrowser.getListViewHtml({
         //        items: result.Items,
         //        smallIcon: true
         //    });
 
-        //    $(".playlist", page).html(html).trigger('create').lazyChildren();
+        //    $(".playlist", page).html(html).lazyChildren();
         //});
 
         html += LibraryBrowser.getListViewHtml({
@@ -764,6 +770,7 @@
 
         var page = this;
 
+        Dashboard.importCss('css/nowplaying.css');
         bindEvents(page);
 
         $('.sendMessageForm').off('submit', NowPlayingPage.onMessageSubmit).on('submit', NowPlayingPage.onMessageSubmit);
@@ -813,7 +820,7 @@
             }
         });
 
-        $(MediaController).on('playerchange', function () {
+        Events.on(MediaController, 'playerchange', function () {
             updateCastIcon(page);
         });
 
@@ -825,7 +832,7 @@
 
         currentImgUrl = null;
 
-        $(MediaController).on('playerchange', onPlayerChange);
+        Events.on(MediaController, 'playerchange', onPlayerChange);
 
         bindToPlayer(page, MediaController.getCurrentPlayer());
 
@@ -854,7 +861,7 @@
 
         releaseCurrentPlayer();
 
-        $(MediaController).off('playerchange', onPlayerChange);
+        Events.off(MediaController, 'playerchange', onPlayerChange);
 
         lastPlayerState = null;
         $(document.body).removeClass('hiddenViewMenuBar').removeClass('hiddenNowPlayingBar');

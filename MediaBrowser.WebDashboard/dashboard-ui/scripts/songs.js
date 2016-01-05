@@ -43,7 +43,7 @@
         Dashboard.showLoadingMsg();
 
         var query = getQuery();
-        ApiClient.getItems(Dashboard.getCurrentUserId(), query).done(function (result) {
+        ApiClient.getItems(Dashboard.getCurrentUserId(), query).then(function (result) {
 
             // Scroll back up so they can see the results from the beginning
             window.scrollTo(0, 0);
@@ -73,8 +73,6 @@
             var elem = page.querySelector('#items');
             elem.innerHTML = html + pagingHtml;
             ImageLoader.lazyChildren(elem);
-
-            Events.trigger(elem, 'create');
 
             $('.btnNextPage', page).on('click', function () {
                 query.StartIndex += query.Limit;

@@ -32,6 +32,12 @@ namespace MediaBrowser.Api.System
 
     }
 
+    [Route("/System/Ping", "POST")]
+    public class PingSystem : IReturnVoid
+    {
+
+    }
+
     /// <summary>
     /// Class RestartApplication
     /// </summary>
@@ -72,12 +78,6 @@ namespace MediaBrowser.Api.System
         public string Name { get; set; }
     }
 
-    [Route("/System/SupporterInfo", "GET")]
-    [Authenticated]
-    public class GetSupporterInfo : IReturn<SupporterInfo>
-    {
-    }
-
     /// <summary>
     /// Class SystemInfoService
     /// </summary>
@@ -110,11 +110,9 @@ namespace MediaBrowser.Api.System
             _security = security;
         }
 
-        public async Task<object> Get(GetSupporterInfo request)
+        public object Post(PingSystem request)
         {
-            var result = await _security.GetSupporterInfo().ConfigureAwait(false);
-
-            return ToOptimizedResult(result);
+            return _appHost.Name;
         }
 
         public object Get(GetServerLogs request)

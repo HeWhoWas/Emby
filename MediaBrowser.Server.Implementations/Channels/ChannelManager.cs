@@ -444,7 +444,7 @@ namespace MediaBrowser.Server.Implementations.Channels
                 isNew = true;
             }
             item.Path = path;
-            
+
             if (!string.Equals(item.ChannelId, channelId, StringComparison.OrdinalIgnoreCase))
             {
                 forceUpdate = true;

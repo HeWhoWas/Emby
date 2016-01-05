@@ -1,4 +1,6 @@
 {
+    "OptionSmartSubtitles": "Smart",
+    "OptionSmartSubtitlesHelp": "Subtitles matching the language preference will be loaded when the audio is in a foreign language.",
     "LabelExit": "Zav\u0159\u00edt",
     "LabelVisitCommunity": "Nav\u0161t\u00edvit komunitu",
     "LabelGithub": "Github",
@@ -75,7 +77,6 @@
     "ButtonConfigurePinCode": "Konfigurace pin code",
     "HeaderAdultsReadHere": "Pro dosp\u011bl\u00e9 - \u010dt\u011bte zde!",
     "RegisterWithPayPal": "Zaregistrujte se pomoc\u00ed PayPal",
-    "HeaderSyncRequiresSupporterMembership": "Synchronizace vy\u017eaduje \u010dlenstv\u00ed v podpo\u0159e (supporter membership) ",
     "HeaderEnjoyDayTrial": "U\u017eijte si 14 denn\u00ed zku\u0161ebn\u00ed verzi zdarma",
     "LabelSyncTempPath": "Adres\u00e1\u0159 pro do\u010dasn\u00e9 soubory:",
     "LabelSyncTempPathHelp": "Zadejte vlastn\u00ed synchroniza\u010dn\u00ed pracovn\u00ed slo\u017eku. P\u0159eveden\u00e9 m\u00e9dia vytvo\u0159en\u00e9 b\u011bhem synchroniza\u010dn\u00edho procesu zde budou ulo\u017eeny.",
@@ -102,7 +103,7 @@
     "FolderTypeInherit": "Zd\u011bdit",
     "LabelContentType": "Typ obsahu:",
     "TitleScheduledTasks": "Napl\u00e1novan\u00e9 \u00falohy",
-    "HeaderSetupLibrary": "Nastaven\u00ed Va\u0161i knihovny m\u00e9di\u00ed",
+    "HeaderSetupLibrary": "Nastaven\u00ed Va\u0161ich knihoven m\u00e9di\u00ed",
     "ButtonAddMediaFolder": "P\u0159idat slo\u017eku m\u00e9di\u00ed",
     "LabelFolderType": "Typ slo\u017eky:",
     "ReferToMediaLibraryWiki": "Pod\u00edvejte se na wiki knihovny m\u00e9di\u00ed.",
@@ -1293,7 +1294,7 @@
     "OptionUpcomingStreamingMovies": "V\u010detn\u011b uk\u00e1zek z nov\u00fdch a p\u0159ipravovan\u00fdch film\u016f na Netflix",
     "LabelDisplayTrailersWithinMovieSuggestions": "Zobrazit trailery u doporu\u010den\u00fdch film\u016f",
     "LabelDisplayTrailersWithinMovieSuggestionsHelp": "Vy\u017eaduje instalaci Trailer kan\u00e1lu.",
-    "CinemaModeConfigurationHelp2": "Jednotliv\u00ed u\u017eivatel\u00e9 budou m\u00edt mo\u017enost zak\u00e1zat re\u017eim kino v r\u00e1mci sv\u00fdch vlastn\u00edch preferenc\u00ed.",
+    "CinemaModeConfigurationHelp2": "Emby apps will have a setting to enable or disable cinema mode. TV apps enable cinema mode by default.",
     "LabelEnableCinemaMode": "Povolit Cinema M\u00f3d",
     "HeaderCinemaMode": "Cinema M\u00f3d",
     "LabelDateAddedBehavior": "Nov\u00fd obsah \u0159adit dle data:",
@@ -1513,8 +1514,8 @@
     "OptionEnableVideoFrameAnalysis": "Povolit anal\u00fdzu videa sn\u00edmek po sn\u00edmku",
     "OptionEnableVideoFrameAnalysisHelp": "Extrahuje podrobn\u00e9 informace o videu, kter\u00e9 lze pou\u017e\u00edt pro co nejefektivn\u011bj\u0161\u00ed p\u0159ek\u00f3dov\u00e1n\u00ed. Zp\u016fsob\u00ed d\u00e9letrvaj\u00edc\u00ed prohled\u00e1v\u00e1n\u00ed knihovny.",
     "LabelVideoFrameAnalysisLimit": "Limit jednotliv\u00fdch sn\u00edmk\u016f pro anal\u00fdzu videa men\u0161\u00ed ne\u017e:",
-    "LabelHardwareVideoDecoder": "Hardwarov\u00fd dekod\u00e9r videa:",
-    "LabelHardwareVideoDecoderHelp": "K dispozici pouze na podporovan\u00fdch syst\u00e9mech.",
+    "LabelHardwareAccelerationType": "Hardware acceleration:",
+    "LabelHardwareAccelerationTypeHelp": "Available on supported systems only.",
     "ButtonServerDashboard": "Hlavn\u00ed nab\u00eddka serveru",
     "HeaderAdmin": "Administr\u00e1tor",
     "ButtonSignOut": "Odhl\u00e1sit se",
@@ -1524,5 +1525,7 @@
     "ButtonEditImages": "Editace obr\u00e1zk\u016f",
     "LabelFolder": "Slo\u017eka:",
     "HeadersFolders": "Slo\u017eky",
-    "LabelDisplayName": "Zobrazovan\u00e9 jm\u00e9no:"
+    "LabelDisplayName": "Zobrazovan\u00e9 jm\u00e9no:",
+    "HeaderNewRecording": "New Recording",
+    "ButtonAdvanced": "Advanced"
 }

@@ -1,4 +1,11 @@
-﻿var ScheduledTaskPage = {
+﻿// Array Remove - By John Resig (MIT Licensed)
+Array.prototype.remove = function (from, to) {
+    var rest = this.slice((to || from) + 1 || this.length);
+    this.length = from < 0 ? this.length + from : from;
+    return this.push.apply(this, rest);
+};
+
+var ScheduledTaskPage = {
 
     refreshScheduledTask: function () {
         Dashboard.showLoadingMsg();
@@ -6,7 +13,7 @@
         var id = getParameterByName('id');
 
 
-        ApiClient.getScheduledTask(id).done(ScheduledTaskPage.loadScheduledTask);
+        ApiClient.getScheduledTask(id).then(ScheduledTaskPage.loadScheduledTask);
     },
 
     loadScheduledTask: function (task) {
@@ -147,7 +154,7 @@
 
         var page = $.mobile.activePage;
 
-        Events.trigger($('#selectTriggerType', page).val('DailyTrigger')[0], 'change');
+        $('#selectTriggerType', page).val('DailyTrigger').trigger('change');
 
         $('#popupAddTrigger', page).on("popupafteropen", function () {
             $('#addTriggerForm input:first', this).focus();
@@ -177,11 +184,11 @@
         var id = getParameterByName('id');
 
 
-        ApiClient.getScheduledTask(id).done(function (task) {
+        ApiClient.getScheduledTask(id).then(function (task) {
 
             task.Triggers.remove(index);
 
-            ApiClient.updateScheduledTaskTriggers(task.Id, task.Triggers).done(function () {
+            ApiClient.updateScheduledTaskTriggers(task.Id, task.Triggers).then(function () {
 
                 ScheduledTaskPage.refreshScheduledTask();
 
@@ -293,11 +300,11 @@
 
         var id = getParameterByName('id');
 
-        ApiClient.getScheduledTask(id).done(function (task) {
+        ApiClient.getScheduledTask(id).then(function (task) {
 
             task.Triggers.push(ScheduledTaskPage.getTriggerToAdd());
 
-            ApiClient.updateScheduledTaskTriggers(task.Id, task.Triggers).done(function () {
+            ApiClient.updateScheduledTaskTriggers(task.Id, task.Triggers).then(function () {
 
                 $('#popupAddTrigger').popup('close');
 

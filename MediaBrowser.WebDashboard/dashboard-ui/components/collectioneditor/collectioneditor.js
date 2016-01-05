@@ -1,4 +1,4 @@
-﻿define([], function () {
+﻿define(['components/paperdialoghelper', 'paper-checkbox', 'paper-dialog', 'paper-input'], function (paperDialogHelper) {
 
     function onSubmit() {
         Dashboard.showLoadingMsg();
@@ -33,13 +33,13 @@
             url: url,
             dataType: "json"
 
-        }).done(function (result) {
+        }).then(function (result) {
 
             Dashboard.hideLoadingMsg();
 
             var id = result.Id;
 
-            PaperDialogHelper.close(dlg);
+            paperDialogHelper.close(dlg);
             redirectToCollection(id);
 
         });
@@ -49,7 +49,7 @@
 
         var context = getParameterByName('context');
 
-        ApiClient.getItem(Dashboard.getCurrentUserId(), id).done(function (item) {
+        ApiClient.getItem(Dashboard.getCurrentUserId(), id).then(function (item) {
 
             Dashboard.navigate(LibraryBrowser.getHref(item, context));
 
@@ -67,11 +67,11 @@
             type: "POST",
             url: url
 
-        }).done(function () {
+        }).then(function () {
 
             Dashboard.hideLoadingMsg();
 
-            PaperDialogHelper.close(dlg);
+            paperDialogHelper.close(dlg);
 
             Dashboard.alert(Globalize.translate('MessageItemsAdded'));
         });
@@ -98,7 +98,7 @@
             SortBy: "SortName"
         };
 
-        ApiClient.getItems(Dashboard.getCurrentUserId(), options).done(function (result) {
+        ApiClient.getItems(Dashboard.getCurrentUserId(), options).then(function (result) {
 
             var html = '';
 
@@ -119,12 +119,9 @@
 
         var html = '';
 
-        html += '<form class="newCollectionForm" style="max-width:100%;">';
-
-        html += '<br />';
+        html += '<form class="newCollectionForm" style="margin:auto;">';
 
         html += '<div class="fldSelectCollection">';
-        html += '<br />';
         html += '<label for="selectCollectionToAddTo">' + Globalize.translate('LabelSelectCollection') + '</label>';
         html += '<select id="selectCollectionToAddTo" data-mini="true"></select>';
         html += '</div>';
@@ -192,39 +189,34 @@
 
             items = items || [];
 
-            require(['components/paperdialoghelper'], function () {
+            var dlg = paperDialogHelper.createDialog({
+                size: 'small'
+            });
 
-                var dlg = PaperDialogHelper.createDialog({
-                    size: 'small'
-                });
+            var html = '';
+            var title = items.length ? Globalize.translate('HeaderAddToCollection') : Globalize.translate('HeaderNewCollection');
 
-                var html = '';
-                html += '<h2 class="dialogHeader">';
-                html += '<paper-fab icon="arrow-back" mini class="btnCloseDialog"></paper-fab>';
+            html += '<div class="dialogHeader">';
+            html += '<paper-icon-button icon="close" class="btnCancel"></paper-icon-button>';
+            html += '<div class="dialogHeaderTitle">';
+            html += title;
+            html += '</div>';
+            html += '</div>';
 
-                var title = items.length ? Globalize.translate('HeaderAddToCollection') : Globalize.translate('HeaderNewCollection');
+            html += getEditorHtml();
 
-                html += '<div style="display:inline-block;margin-left:.6em;vertical-align:middle;">' + title + '</div>';
-                html += '</h2>';
+            dlg.innerHTML = html;
+            document.body.appendChild(dlg);
 
-                html += '<div class="editorContent" style="max-width:800px;margin:auto;">';
-                html += getEditorHtml();
-                html += '</div>';
+            initEditor(dlg, items);
 
-                dlg.innerHTML = html;
-                document.body.appendChild(dlg);
+            $(dlg).on('iron-overlay-closed', onDialogClosed);
 
-                var editorContent = dlg.querySelector('.editorContent');
-                initEditor(editorContent, items);
+            paperDialogHelper.open(dlg);
 
-                $(dlg).on('iron-overlay-closed', onDialogClosed);
+            $('.btnCancel', dlg).on('click', function () {
 
-                PaperDialogHelper.openWithHash(dlg, 'collectioneditor');
-
-                $('.btnCloseDialog', dlg).on('click', function () {
-
-                    PaperDialogHelper.close(dlg);
-                });
+                paperDialogHelper.close(dlg);
             });
         };
     }

@@ -129,9 +129,9 @@ namespace MediaBrowser.Controller.Entities
                 // Example: if \\server\movies exists, then strip out \\server\movies\action
                 if (isPhysicalRoot)
                 {
-                    var paths = LibraryManager.NormalizeRootPathList(fileSystemDictionary.Keys);
+                    var paths = LibraryManager.NormalizeRootPathList(fileSystemDictionary.Values);
 
-                    fileSystemDictionary = paths.Select(FileSystem.GetDirectoryInfo).ToDictionary(i => i.FullName);
+                    fileSystemDictionary = paths.ToDictionary(i => i.FullName);
                 }
 
                 args.FileSystemDictionary = fileSystemDictionary;
@@ -181,9 +181,7 @@ namespace MediaBrowser.Controller.Entities
         }
         private List<LinkedChild> GetLinkedChildrenInternal()
         {
-            return LibraryManager.RootFolder.Children
-                .OfType<Folder>()
-                .Where(i => i.Path != null && PhysicalLocations.Contains(i.Path, StringComparer.OrdinalIgnoreCase))
+            return GetPhysicalParents()
                 .SelectMany(c => c.LinkedChildren)
                 .ToList();
         }
@@ -199,11 +197,14 @@ namespace MediaBrowser.Controller.Entities
 
         private IEnumerable<BaseItem> GetActualChildren()
         {
-            return
-                LibraryManager.RootFolder.Children
+            return GetPhysicalParents().SelectMany(c => c.Children);
+        }
+
+        public IEnumerable<Folder> GetPhysicalParents()
+        {
+            return LibraryManager.RootFolder.Children
                 .OfType<Folder>()
-                .Where(i => i.Path != null && PhysicalLocations.Contains(i.Path, StringComparer.OrdinalIgnoreCase))
-                .SelectMany(c => c.Children);
+                .Where(i => i.Path != null && PhysicalLocations.Contains(i.Path, StringComparer.OrdinalIgnoreCase));
         }
 
         [IgnoreDataMember]

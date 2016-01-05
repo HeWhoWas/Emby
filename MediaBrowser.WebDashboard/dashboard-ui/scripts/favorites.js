@@ -1,7 +1,7 @@
 ﻿(function ($, document) {
 
     function enableScrollX() {
-        return $.browser.mobile && AppInfo.enableAppLayouts;
+        return browserInfo.mobile && AppInfo.enableAppLayouts;
     }
 
     function getThumbShape() {
@@ -25,7 +25,7 @@
             { name: 'HeaderFavoriteGames', types: "Game", id: "favoriteGames", shape: getSquareShape(), preferThumb: false, showTitle: true },
             { name: 'HeaderFavoriteArtists', types: "MusicArtist", id: "favoriteArtists", shape: getSquareShape(), preferThumb: false, showTitle: true, overlayText: false, showParentTitle: true, centerText: true, overlayPlayButton: true },
             { name: 'HeaderFavoriteAlbums', types: "MusicAlbum", id: "favoriteAlbums", shape: getSquareShape(), preferThumb: false, showTitle: true, overlayText: false, showParentTitle: true, centerText: true, overlayPlayButton: true },
-            { name: 'HeaderFavoriteSongs', types: "Audio", id: "favoriteSongs", shape: getSquareShape(), preferThumb: false, showTitle: true, overlayText: false, showParentTitle: true, centerText: true, overlayPlayButton: true }
+            { name: 'HeaderFavoriteSongs', types: "Audio", id: "favoriteSongs", shape: getSquareShape(), preferThumb: false, showTitle: true, overlayText: false, showParentTitle: true, centerText: true, overlayMoreButton: true, defaultAction: 'instantmix' }
         ];
     }
 
@@ -38,7 +38,6 @@
             SortBy: "SortName",
             SortOrder: "Ascending",
             Filters: "IsFavorite",
-            Limit: screenWidth >= 1920 ? 10 : (screenWidth >= 1440 ? 8 : 6),
             Recursive: true,
             Fields: "PrimaryImageAspectRatio,SyncInfo",
             CollapseBoxSetItems: false,
@@ -49,8 +48,12 @@
             options.ParentId = topParentId;
         }
 
-        if (isSingleSection) {
-            options.Limit = null;
+        if (!isSingleSection) {
+            options.Limit = screenWidth >= 1920 ? 10 : (screenWidth >= 1440 ? 8 : 6);
+
+            if (enableScrollX()) {
+                options.Limit = 12;
+            }
         }
 
         var promise;
@@ -62,7 +65,7 @@
             promise = ApiClient.getItems(userId, options);
         }
 
-        return promise.done(function (result) {
+        return promise.then(function (result) {
 
             var html = '';
 
@@ -96,7 +99,9 @@
                     showDetailsMenu: true,
                     centerText: section.centerText,
                     overlayPlayButton: section.overlayPlayButton,
-                    context: 'home-favorites'
+                    overlayMoreButton: section.overlayMoreButton,
+                    context: 'home-favorites',
+                    defaultAction: section.defaultAction
                 });
 
                 html += '</div>';
@@ -155,7 +160,7 @@
             promises.push(loadSection(elem, userId, topParentId, section, sections.length == 1));
         }
 
-        $.when(promises).done(function () {
+        Promise.all(promises).then(function () {
             Dashboard.hideLoadingMsg();
 
             LibraryBrowser.setLastRefreshed(page);
@@ -177,7 +182,7 @@
 
     pageIdOn('pageinit', "indexPage", initHomePage);
 
-    pageIdOn('pageshow', "favoritesPage", function () {
+    pageIdOn('pagebeforeshow', "favoritesPage", function () {
 
         var page = this;
 

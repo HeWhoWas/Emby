@@ -1,4 +1,6 @@
 {
+    "OptionSmartSubtitles": "Smart",
+    "OptionSmartSubtitlesHelp": "Subtitles matching the language preference will be loaded when the audio is in a foreign language.",
     "LabelExit": "Esci",
     "LabelVisitCommunity": "Visita la Community",
     "LabelGithub": "Github",
@@ -75,7 +77,6 @@
     "ButtonConfigurePinCode": "Configura codice pin",
     "HeaderAdultsReadHere": "Adulti leggete qui!",
     "RegisterWithPayPal": "Registrati con PayPal",
-    "HeaderSyncRequiresSupporterMembership": "Sync richiede un abbonamento Supporter",
     "HeaderEnjoyDayTrial": "Goditi una prova gratuita per 14 giorni",
     "LabelSyncTempPath": "Percorso file temporanei:",
     "LabelSyncTempPathHelp": "Specifica una cartella per la sincronizzazione. I file multimediali convertiti durante la sincronizzazione verranno memorizzati qui.",
@@ -102,7 +103,7 @@
     "FolderTypeInherit": "ereditare",
     "LabelContentType": "Tipo di contenuto:",
     "TitleScheduledTasks": "Task pianificati",
-    "HeaderSetupLibrary": "Configura la tua libreria di contenuti multimediali",
+    "HeaderSetupLibrary": "Setup your media libraries",
     "ButtonAddMediaFolder": "Aggiungi cartella",
     "LabelFolderType": "Tipo cartella",
     "ReferToMediaLibraryWiki": "Fare riferimento alla wiki libreria multimediale.",
@@ -1293,7 +1294,7 @@
     "OptionUpcomingStreamingMovies": "Includi trailer nuovi e imminenti film su Netflix",
     "LabelDisplayTrailersWithinMovieSuggestions": "Visualizzare i rimorchi all'interno di suggerimenti di film",
     "LabelDisplayTrailersWithinMovieSuggestionsHelp": "Richiede l'installazione del canale Trailer.",
-    "CinemaModeConfigurationHelp2": "I singoli utenti avranno la possibilit\u00e0 di disabilitare la modalit\u00e0 cinema all'interno delle proprie preferenze.",
+    "CinemaModeConfigurationHelp2": "Emby apps will have a setting to enable or disable cinema mode. TV apps enable cinema mode by default.",
     "LabelEnableCinemaMode": "Attiva modalit\u00e0 cinema",
     "HeaderCinemaMode": "Modalit\u00e0 cinema",
     "LabelDateAddedBehavior": "Data di comportamento per i nuovi contenuti:",
@@ -1513,8 +1514,8 @@
     "OptionEnableVideoFrameAnalysis": "Abilita fotogramma per fotogramma analisi video",
     "OptionEnableVideoFrameAnalysisHelp": "Estrarre informazioni dettagliate sui video che possono essere usati per fare la transcodifica il pi\u00f9 efficiente possibile. Questo far\u00e0 s\u00ec che le scansioni di libreria a richiedere pi\u00f9 tempo.",
     "LabelVideoFrameAnalysisLimit": "Limitare fotogramma per fotogramma analisi a video inferiore a:",
-    "LabelHardwareVideoDecoder": "Decoder video Hardware:",
-    "LabelHardwareVideoDecoderHelp": "Disponibile solo su sistemi supportati.",
+    "LabelHardwareAccelerationType": "Hardware acceleration:",
+    "LabelHardwareAccelerationTypeHelp": "Available on supported systems only.",
     "ButtonServerDashboard": "Server Dashboard",
     "HeaderAdmin": "Admin",
     "ButtonSignOut": "Esci",
@@ -1524,5 +1525,7 @@
     "ButtonEditImages": "Modifica Immagini",
     "LabelFolder": "Cartella:",
     "HeadersFolders": "Cartella",
-    "LabelDisplayName": "Nome visualizzato:"
+    "LabelDisplayName": "Nome visualizzato:",
+    "HeaderNewRecording": "New Recording",
+    "ButtonAdvanced": "Advanced"
 }

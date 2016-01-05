@@ -47,7 +47,7 @@
         var query = getQuery();
         var view = getPageData().view;
 
-        ApiClient.getItems(userId, query).done(function (result) {
+        ApiClient.getItems(userId, query).then(function (result) {
 
             // Scroll back up so they can see the results from the beginning
             window.scrollTo(0, 0);
@@ -72,7 +72,6 @@
             page.querySelector('.listTopPaging').innerHTML = pagingHtml;
 
             updateFilterControls(page);
-            var trigger = false;
 
             if (view == "Thumb") {
                 html = LibraryBrowser.getPosterViewHtml({
@@ -112,7 +111,6 @@
                     items: result.Items,
                     sortBy: query.SortBy
                 });
-                trigger = true;
             }
             else if (view == "Poster") {
                 html = LibraryBrowser.getPosterViewHtml({
@@ -150,10 +148,6 @@
             elem.innerHTML = html + pagingHtml;
             ImageLoader.lazyChildren(elem);
 
-            if (trigger) {
-                Events.trigger(elem, 'create');
-            }
-
             $('.btnNextPage', page).on('click', function () {
                 query.StartIndex += query.Limit;
                 reloadItems(page, viewPanel);
@@ -167,7 +161,7 @@
             $('.btnChangeLayout', page).on('layoutchange', function (e, layout) {
 
                 if (layout == 'Timeline') {
-                    getQuery().SortBy = 'PremiereDate,SortName';
+                    getQuery().SortBy = 'ProductionYear,PremiereDate,SortName';
                     getQuery().SortOrder = 'Descending';
                 }
 

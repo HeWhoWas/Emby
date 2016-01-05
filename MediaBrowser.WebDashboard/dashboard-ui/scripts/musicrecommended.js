@@ -8,7 +8,7 @@
     }
 
     function enableScrollX() {
-        return $.browser.mobile && AppInfo.enableAppLayouts;
+        return browserInfo.mobile && AppInfo.enableAppLayouts;
     }
 
     function getSquareShape() {
@@ -30,7 +30,7 @@
             EnableImageTypes: "Primary,Backdrop,Banner,Thumb"
         };
 
-        ApiClient.getJSON(ApiClient.getUrl('Users/' + userId + '/Items/Latest', options)).done(function (items) {
+        ApiClient.getJSON(ApiClient.getUrl('Users/' + userId + '/Items/Latest', options)).then(function (items) {
 
             var elem = page.querySelector('#recentlyAddedSongs');
             elem.innerHTML = LibraryBrowser.getPosterViewHtml({
@@ -39,11 +39,10 @@
                 showLatestItemsPopup: false,
                 shape: getSquareShape(),
                 showTitle: true,
-                defaultAction: 'play',
                 showParentTitle: true,
                 lazy: true,
                 centerText: true,
-                overlayMoreButton: true
+                overlayPlayButton: true
 
             });
             ImageLoader.lazyChildren(elem);
@@ -70,7 +69,7 @@
             EnableImageTypes: "Primary,Backdrop,Banner,Thumb"
         };
 
-        ApiClient.getItems(Dashboard.getCurrentUserId(), options).done(function (result) {
+        ApiClient.getItems(Dashboard.getCurrentUserId(), options).then(function (result) {
 
             var elem;
 
@@ -115,7 +114,7 @@
             EnableImageTypes: "Primary,Backdrop,Banner,Thumb"
         };
 
-        ApiClient.getItems(Dashboard.getCurrentUserId(), options).done(function (result) {
+        ApiClient.getItems(Dashboard.getCurrentUserId(), options).then(function (result) {
 
             var elem;
 
@@ -158,7 +157,7 @@
             Limit: itemsPerRow()
         };
 
-        ApiClient.getItems(Dashboard.getCurrentUserId(), options).done(function (result) {
+        ApiClient.getItems(Dashboard.getCurrentUserId(), options).then(function (result) {
 
             var elem;
 
@@ -174,11 +173,10 @@
                 shape: getSquareShape(),
                 showTitle: true,
                 lazy: true,
-                defaultAction: 'play',
                 coverImage: true,
                 showItemCounts: true,
                 centerText: true,
-                overlayMoreButton: true
+                overlayPlayButton: true
 
             });
             ImageLoader.lazyChildren(itemsContainer);
@@ -209,7 +207,7 @@
             loadRecentlyPlayed(tabContent, parentId);
             loadFrequentlyPlayed(tabContent, parentId);
 
-            require(['scripts/favorites'], function() {
+            require(['scripts/favorites'], function () {
 
                 FavoriteItems.render(tabContent, Dashboard.getCurrentUserId(), parentId, ['favoriteArtists', 'favoriteAlbums', 'favoriteSongs']);
 
@@ -259,6 +257,11 @@
                 depends.push('scripts/musicgenres');
                 renderMethod = 'renderGenresTab';
                 break;
+            case 6:
+                depends.push('scripts/musicfolders');
+                renderMethod = 'renderFoldersTab';
+                initMethod = 'initFoldersTab';
+                break;
             default:
                 break;
         }
@@ -280,7 +283,7 @@
     window.MusicPage.renderSuggestedTab = loadSuggestionsTab;
     window.MusicPage.initSuggestedTab = initSuggestedTab;
 
-    $(document).on('pageinit', "#musicRecommendedPage", function () {
+    pageIdOn('pageinit', "musicRecommendedPage", function () {
 
         var page = this;
 
@@ -297,11 +300,13 @@
 
         LibraryBrowser.configurePaperLibraryTabs(page, tabs, pages, baseUrl);
 
-        $(pages).on('tabchange', function () {
-            loadTab(page, parseInt(this.selected));
+        pages.addEventListener('tabchange', function (e) {
+            loadTab(page, parseInt(e.target.selected));
         });
 
-    }).on('pageshow', "#musicRecommendedPage", function () {
+    });
+
+    pageIdOn('pagebeforeshow', "musicRecommendedPage", function () {
 
         var page = this;
 
@@ -311,7 +316,7 @@
 
             if (parentId) {
 
-                ApiClient.getItem(Dashboard.getCurrentUserId(), parentId).done(function (item) {
+                ApiClient.getItem(Dashboard.getCurrentUserId(), parentId).then(function (item) {
 
                     page.setAttribute('data-title', item.Name);
                     LibraryMenu.setTitle(item.Name);

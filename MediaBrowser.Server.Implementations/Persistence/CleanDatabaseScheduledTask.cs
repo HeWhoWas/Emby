@@ -25,7 +25,7 @@ namespace MediaBrowser.Server.Implementations.Persistence
         private readonly IServerConfigurationManager _config;
         private readonly IFileSystem _fileSystem;
 
-        public const int MigrationVersion = 4;
+        public const int MigrationVersion = 7;
 
         public CleanDatabaseScheduledTask(ILibraryManager libraryManager, IItemRepository itemRepo, ILogger logger, IServerConfigurationManager config, IFileSystem fileSystem)
         {
@@ -75,10 +75,7 @@ namespace MediaBrowser.Server.Implementations.Persistence
         {
             var itemIds = _libraryManager.GetItemIds(new InternalItemsQuery
             {
-                IsCurrentSchema = false,
-
-                // These are constantly getting regenerated so don't bother with them here
-                ExcludeItemTypes = new[] { typeof(LiveTvProgram).Name }
+                IsCurrentSchema = false
             });
 
             var numComplete = 0;
@@ -120,12 +117,6 @@ namespace MediaBrowser.Server.Implementations.Persistence
                 progress.Report(percent * 100);
             }
 
-            if (!_config.Configuration.DisableStartupScan)
-            {
-                _config.Configuration.DisableStartupScan = true;
-                _config.SaveConfiguration();
-            }
-
             if (_config.Configuration.MigrationVersion < MigrationVersion)
             {
                 _config.Configuration.MigrationVersion = MigrationVersion;
@@ -155,7 +146,7 @@ namespace MediaBrowser.Server.Implementations.Persistence
 
                 if (item != null)
                 {
-                    _logger.Debug("Cleaning item {0} type: {1} path: {2}", item.Name, item.GetType().Name, item.Path ?? string.Empty);
+                    _logger.Info("Cleaning item {0} type: {1} path: {2}", item.Name, item.GetType().Name, item.Path ?? string.Empty);
 
                     await _libraryManager.DeleteItem(item, new DeleteOptions
                     {
@@ -176,12 +167,22 @@ namespace MediaBrowser.Server.Implementations.Persistence
         {
             var result = _itemRepo.GetItemIdsWithPath(new InternalItemsQuery
             {
-                IsOffline = false,
                 LocationType = LocationType.FileSystem,
                 //Limit = limit,
 
                 // These have their own cleanup routines
-                ExcludeItemTypes = new[] { typeof(Person).Name, typeof(Genre).Name, typeof(MusicGenre).Name, typeof(GameGenre).Name, typeof(Studio).Name, typeof(Year).Name, typeof(Channel).Name }
+                ExcludeItemTypes = new[]
+                {
+                    typeof(Person).Name, 
+                    typeof(Genre).Name, 
+                    typeof(MusicGenre).Name, 
+                    typeof(GameGenre).Name, 
+                    typeof(Studio).Name, 
+                    typeof(Year).Name, 
+                    typeof(Channel).Name, 
+                    typeof(AggregateFolder).Name, 
+                    typeof(CollectionFolder).Name
+                }
             });
 
             var numComplete = 0;
@@ -202,12 +203,19 @@ namespace MediaBrowser.Server.Implementations.Persistence
 
                     var libraryItem = _libraryManager.GetItemById(item.Item1);
 
+                    if (libraryItem.IsTopParent)
+                    {
+                        continue;
+                    }
+
                     if (Folder.IsPathOffline(path))
                     {
                         libraryItem.IsOffline = true;
                         await libraryItem.UpdateToRepository(ItemUpdateType.None, cancellationToken).ConfigureAwait(false);
                         continue;
                     }
+
+                    _logger.Info("Deleting item from database {0} because path no longer exists. type: {1} path: {2}", libraryItem.Name, libraryItem.GetType().Name, libraryItem.Path ?? string.Empty);
 
                     await _libraryManager.DeleteItem(libraryItem, new DeleteOptions
                     {

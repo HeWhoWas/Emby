@@ -4,7 +4,7 @@
 
     function getDefaultSection(index) {
 
-        if (AppInfo.isNativeApp && $.browser.safari) {
+        if (AppInfo.isNativeApp && browserInfo.safari) {
 
             switch (index) {
 
@@ -95,9 +95,10 @@
 
             elem.innerHTML = '';
 
-            var deferred = DeferredBuilder.Deferred();
-            deferred.resolve();
-            return deferred.promise();
+            return new Promise(function (resolve, reject) {
+
+                resolve();
+            });
         }
     }
 
@@ -125,7 +126,7 @@
             promises.push(loadSection(page, user, displayPreferences, i));
         }
 
-        return $.when(promises);
+        return Promise.all(promises);
     }
 
     var homePageDismissValue = '14';
@@ -133,7 +134,7 @@
 
     function dismissWelcome(page, userId) {
 
-        getDisplayPreferences('home', userId).done(function (result) {
+        getDisplayPreferences('home', userId).then(function (result) {
 
             result.CustomPrefs[homePageTourKey] = homePageDismissValue;
             ApiClient.updateDisplayPreferences('home', result, userId, AppSettings.displayPreferencesKey());
@@ -165,7 +166,7 @@
 
     function takeTour(page, userId) {
 
-        Dashboard.loadSwipebox().done(function () {
+        require(['swipebox'], function () {
 
             $.swipebox([
                     { href: 'css/images/tour/web/tourcontent.jpg', title: Globalize.translate('WebClientTourContent') },
@@ -201,11 +202,11 @@
 
                 Dashboard.showLoadingMsg();
 
-                getDisplayPreferences('home', userId).done(function (result) {
+                getDisplayPreferences('home', userId).then(function (result) {
 
-                    Dashboard.getCurrentUser().done(function (user) {
+                    Dashboard.getCurrentUser().then(function (user) {
 
-                        loadSections(tabContent, user, result).done(function () {
+                        loadSections(tabContent, user, result).then(function () {
 
                             if (!AppInfo.isNativeApp) {
                                 showWelcomeIfNeeded(page, result);
@@ -266,11 +267,11 @@
 
         LibraryBrowser.configurePaperLibraryTabs(page, tabs, pages, 'index.html');
 
-        $(pages).on('tabchange', function () {
-            loadTab(page, parseInt(this.selected));
+        pages.addEventListener('tabchange', function (e) {
+            loadTab(page, parseInt(e.target.selected));
         });
 
-        Events.on(page.querySelector('.btnTakeTour'), 'click', function () {
+        page.querySelector('.btnTakeTour').addEventListener('click', function () {
             takeTour(page, Dashboard.getCurrentUserId());
         });
 
@@ -286,13 +287,13 @@
     pageIdOn('pageshow', "indexPage", function () {
 
         var page = this;
-        $(MediaController).on('playbackstop', onPlaybackStop);
+        Events.on(MediaController, 'playbackstop', onPlaybackStop);
     });
 
     pageIdOn('pagebeforehide', "indexPage", function () {
 
         var page = this;
-        $(MediaController).off('playbackstop', onPlaybackStop);
+        Events.off(MediaController, 'playbackstop', onPlaybackStop);
     });
 
     function onPlaybackStop(e, state) {
@@ -301,15 +302,13 @@
             var page = $($.mobile.activePage)[0];
             var pages = page.querySelector('neon-animated-pages');
 
-            $(pages).trigger('tabchange');
+            pages.dispatchEvent(new CustomEvent("tabchange", {}));
         }
     }
 
     function getDisplayPreferences(key, userId) {
 
-        return ApiClient.getDisplayPreferences(key, userId, AppSettings.displayPreferencesKey()).done(function (result) {
-
-        });
+        return ApiClient.getDisplayPreferences(key, userId, AppSettings.displayPreferencesKey());
     }
 
     window.HomePage = {

@@ -72,9 +72,14 @@ namespace Emby.Drawing.ImageMagick
 
         private void LogVersion()
         {
-            _logger.Info("ImageMagick version: " + Wand.VersionString);
+            _logger.Info("ImageMagick version: " + GetVersion());
             TestWebp();
             Wand.SetMagickThreadCount(1);
+        }
+
+        public static string GetVersion()
+        {
+            return Wand.VersionString;
         }
 
         private bool _webpAvailable = true;
@@ -90,7 +95,7 @@ namespace Emby.Drawing.ImageMagick
                     wand.SaveImage(tmpPath);
                 }
             }
-            catch 
+            catch
             {
                 //_logger.ErrorException("Error loading webp: ", ex);
                 _webpAvailable = false;
@@ -251,8 +256,8 @@ namespace Emby.Drawing.ImageMagick
         private void SaveDelay()
         {
             // For some reason the images are not always getting released right away
-            var task = Task.Delay(300);
-            Task.WaitAll(task);
+            //var task = Task.Delay(300);
+            //Task.WaitAll(task);
         }
 
         public string Name

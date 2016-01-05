@@ -69,11 +69,6 @@
         padding-left: .5em !important;
         padding-right: .5em !important;
     }
-
-    .pageWithAbsoluteTabs .pageTabContent {
-        padding-left: .25em !important;
-        padding-right: .25em !important;
-    }
 }
 
 .libraryPage .currentUsername {
@@ -87,9 +82,16 @@
     line-height: initial;
 }
 
-    .listHeader + paper-button {
-        margin-left: 2em;
+@media all and (max-width: 500px) {
+
+    .listHeader {
+        padding-left: 5px;
     }
+}
+
+.listHeader + paper-button {
+    margin-left: 2em;
+}
 
 .ehsContent, .ehsContent .pageTabContent {
     margin: 0 auto;
@@ -128,14 +130,6 @@
     }
 }
 
-@media all and (min-width: 500px) {
-
-    .ehsContent:not(.fullWidth), .ehsContent .pageTabContent {
-        width: 98%;
-        margin: 0 auto;
-    }
-}
-
 @media all and (min-width: 1200px) {
 
     .paddedItemsContainer {
@@ -146,14 +140,14 @@
 @media all and (min-width: 1200px) {
 
     .ehsContent:not(.fullWidth), .ehsContent .pageTabContent {
-        width: 95%;
+        width: 96%;
     }
 }
 
-@media all and (min-width: 1920px) {
+@media all and (min-width: 2560px) {
 
     .ehsContent:not(.fullWidth), .ehsContent .pageTabContent {
-        width: 95%;
+        width: 96%;
     }
 }
 
@@ -469,11 +463,15 @@ span.itemCommunityRating:not(:empty) + .userDataIcons {
 }
 
 .itemDetailImage {
-    -moz-box-shadow: 0px 0 20px #000;
-    -webkit-box-shadow: 0px 0 20px #000;
-    box-shadow: 0px 0 20px #000;
-    border: solid 1px #222;
+    border: solid 1px transparent;
 }
+
+    .itemDetailImage.loaded {
+        -moz-box-shadow: 0px 0 20px #000;
+        -webkit-box-shadow: 0px 0 20px #000;
+        box-shadow: 0px 0 20px #000;
+        border: solid 1px #222;
+    }
 
 .detailImageContainer img {
     width: 280px;
@@ -1252,7 +1250,7 @@ span.itemCommunityRating:not(:empty) + .userDataIcons {
     }
 
     .itemsContainerWithAlphaPicker {
-        margin-right: 15px;
+        margin-right: 20px;
     }
 }
 
@@ -1459,6 +1457,10 @@ span.itemCommunityRating:not(:empty) + .userDataIcons {
     .itemsListview .content-icon {
         width: auto !important;
         padding-right: .7em;
+    }
+
+    .itemsListview.paperList {
+        text-align: left;
     }
 
     .itemsListview paper-item-body {
@@ -1811,3 +1813,16 @@ span.itemCommunityRating:not(:empty) + .userDataIcons {
         -ms-transform: rotateZ(360deg);
     }
 }
+
+#criticReviewsContent.hiddenScrollX {
+    white-space: nowrap;
+}
+
+    #criticReviewsContent.hiddenScrollX .paperList {
+        min-width: 240px;
+        width: 90%;
+        max-width: 500px;
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 4px 0 0;
+    }

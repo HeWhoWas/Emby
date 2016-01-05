@@ -1,4 +1,6 @@
 {
+    "OptionSmartSubtitles": "Smart",
+    "OptionSmartSubtitlesHelp": "Subtitles matching the language preference will be loaded when the audio is in a foreign language.",
     "LabelExit": "\u96e2\u958b",
     "LabelVisitCommunity": "\u8a2a\u554f\u8a0e\u8ad6\u5340",
     "LabelGithub": "Github",
@@ -75,7 +77,6 @@
     "ButtonConfigurePinCode": "\u8a2d\u7f6e PIN \u78bc",
     "HeaderAdultsReadHere": "\u6210\u4eba\u89c0\u8cde\uff01",
     "RegisterWithPayPal": "\u7531 PayPal \u8a3b\u518a",
-    "HeaderSyncRequiresSupporterMembership": "\u540c\u6b65\u9700\u8981\u6703\u54e1",
     "HeaderEnjoyDayTrial": "\u4eab\u53d7\u514d\u8cbb14\u5929\u8a66\u7528\u671f",
     "LabelSyncTempPath": "\u81e8\u6642\u6587\u4ef6\u7684\u8def\u5f91\uff1a",
     "LabelSyncTempPathHelp": "\u9078\u64c7\u81ea\u5b9a\u540c\u6b65\u5de5\u4f5c\u7684\u6587\u4ef6\u593e\u3002\u5728\u540c\u6b65\u904e\u7a0b\u4e2d\u5efa\u7acb\u7684\u8f49\u63db\u5a92\u9ad4\u5c07\u88ab\u5b58\u653e\u5230\u9019\u88e1\u3002",
@@ -102,7 +103,7 @@
     "FolderTypeInherit": "\u7e7c\u627f",
     "LabelContentType": "\u5167\u5bb9\u985e\u578b\uff1a",
     "TitleScheduledTasks": "\u4efb\u52d9\u6642\u9593\u8868",
-    "HeaderSetupLibrary": "\u8a2d\u7f6e\u60a8\u7684\u5a92\u9ad4\u5eab",
+    "HeaderSetupLibrary": "Setup your media libraries",
     "ButtonAddMediaFolder": "\u6dfb\u52a0\u5a92\u9ad4\u6587\u4ef6\u593e",
     "LabelFolderType": "\u6587\u4ef6\u593e\u985e\u578b\uff1a",
     "ReferToMediaLibraryWiki": "\u8acb\u53c3\u95b1\u5a92\u9ad4\u5eab\u7684\u7dad\u57fa \u3002",
@@ -1293,7 +1294,7 @@
     "OptionUpcomingStreamingMovies": "Include trailers from new and upcoming movies on Netflix",
     "LabelDisplayTrailersWithinMovieSuggestions": "Display trailers within movie suggestions",
     "LabelDisplayTrailersWithinMovieSuggestionsHelp": "Requires installation of the Trailer channel.",
-    "CinemaModeConfigurationHelp2": "Individual users will have the ability to disable cinema mode within their own preferences.",
+    "CinemaModeConfigurationHelp2": "Emby apps will have a setting to enable or disable cinema mode. TV apps enable cinema mode by default.",
     "LabelEnableCinemaMode": "Enable cinema mode",
     "HeaderCinemaMode": "Cinema Mode",
     "LabelDateAddedBehavior": "Date added behavior for new content:",
@@ -1513,8 +1514,8 @@
     "OptionEnableVideoFrameAnalysis": "Enable frame by frame video analysis",
     "OptionEnableVideoFrameAnalysisHelp": "Extract detailed information about videos that can be used to make transcoding as efficient as possible. This will cause library scans to take longer.",
     "LabelVideoFrameAnalysisLimit": "Limit frame by frame analysis to videos less than:",
-    "LabelHardwareVideoDecoder": "Hardware video decoder:",
-    "LabelHardwareVideoDecoderHelp": "Available on supported systems only.",
+    "LabelHardwareAccelerationType": "Hardware acceleration:",
+    "LabelHardwareAccelerationTypeHelp": "Available on supported systems only.",
     "ButtonServerDashboard": "\u4f3a\u670d\u5668\u72c0\u614b",
     "HeaderAdmin": "Admin",
     "ButtonSignOut": "\u767b\u51fa",
@@ -1524,5 +1525,7 @@
     "ButtonEditImages": "Edit Images",
     "LabelFolder": "Folder:",
     "HeadersFolders": "Folders",
-    "LabelDisplayName": "Display name:"
+    "LabelDisplayName": "Display name:",
+    "HeaderNewRecording": "New Recording",
+    "ButtonAdvanced": "Advanced"
 }

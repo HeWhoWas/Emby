@@ -5,7 +5,7 @@
     <title>Emby</title>
 </head>
 <body>
-    <div id="displayPreferencesPage" data-role="page" class="page libraryPage userPreferencesPage noSecondaryNavPage" data-title="${HeaderDisplaySettings}" data-require="scripts/mypreferencesdisplay,paperbuttonstyle" data-backbutton="true" data-menubutton="false">
+    <div id="displayPreferencesPage" data-role="page" class="page libraryPage userPreferencesPage noSecondaryNavPage" data-title="${HeaderDisplaySettings}" data-require="scripts/mypreferencesdisplay,paper-checkbox" data-backbutton="true" data-menubutton="false">
 
         <div data-role="content">
             <form class="displayPreferencesForm userProfileSettingsForm" style="margin: 0 auto;">
@@ -90,14 +90,6 @@
                             <div class="fieldDescription">${LabelEnableBackdropsHelp}</div>
                         </div>
 
-                        <div class="fldFullscreen">
-                            <br />
-                            <br />
-                            <div>
-                                <paper-checkbox class="chkEnableFullScreen">${LabelEnableFullScreen}</paper-checkbox>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
@@ -121,12 +113,6 @@
                         </div>
                     </div>
 
-                </div>
-
-                <div>
-                    <button type="submit" data-role="none" class="clearButton">
-                        <paper-button raised class="submit block"><iron-icon icon="check"></iron-icon><span>${ButtonSave}</span></paper-button>
-                    </button>
                 </div>
                 <p>
                     <span style="color:#52B54B;margin-left:.5em;margin-right:.5em;">*</span><span>${LegendTheseSettingsShared}</span>

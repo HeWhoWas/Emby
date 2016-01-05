@@ -82,7 +82,10 @@ namespace MediaBrowser.MediaEncoding.Encoder
 
                 if (state.OutputVideoBitrate.HasValue)
                 {
-                    var resolution = ResolutionNormalizer.Normalize(state.OutputVideoBitrate.Value,
+                    var resolution = ResolutionNormalizer.Normalize(
+						state.VideoStream == null ? (int?)null : state.VideoStream.BitRate,
+						state.OutputVideoBitrate.Value,
+						state.VideoStream == null ? null : state.VideoStream.Codec,
                         state.OutputVideoCodec,
                         request.MaxWidth,
                         request.MaxHeight);
@@ -502,7 +505,7 @@ namespace MediaBrowser.MediaEncoding.Encoder
             {
                 return "libx264";
             }
-            if (string.Equals(codec, "h265", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(codec, "h265", StringComparison.OrdinalIgnoreCase) || string.Equals(codec, "hevc", StringComparison.OrdinalIgnoreCase))
             {
                 return "libx265";
             }

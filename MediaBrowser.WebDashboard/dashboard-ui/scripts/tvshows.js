@@ -44,7 +44,7 @@
 
         var query = getQuery();
 
-        ApiClient.getItems(Dashboard.getCurrentUserId(), query).done(function (result) {
+        ApiClient.getItems(Dashboard.getCurrentUserId(), query).then(function (result) {
 
             // Scroll back up so they can see the results from the beginning
             window.scrollTo(0, 0);
@@ -52,7 +52,6 @@
             var view = getPageData().view;
 
             var html = '';
-            var trigger = false;
             var pagingHtml = LibraryBrowser.getQueryPagingHtml({
                 startIndex: query.StartIndex,
                 limit: query.Limit,
@@ -113,7 +112,6 @@
                     context: 'tv',
                     sortBy: query.SortBy
                 });
-                trigger = true;
             }
             else if (view == "PosterCard") {
                 html = LibraryBrowser.getPosterViewHtml({
@@ -141,10 +139,6 @@
             var elem = page.querySelector('#items');
             elem.innerHTML = html + pagingHtml;
             ImageLoader.lazyChildren(elem);
-
-            if (trigger) {
-                Events.trigger(elem, 'create');
-            }
 
             $('.btnNextPage', page).on('click', function () {
                 query.StartIndex += query.Limit;

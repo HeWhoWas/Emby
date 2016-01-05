@@ -160,9 +160,7 @@ namespace MediaBrowser.Providers.Movies
             {
                 Url = string.Format(TmdbConfigUrl, ApiKey),
                 CancellationToken = cancellationToken,
-                AcceptHeader = AcceptHeader,
-                CacheMode = CacheMode.Unconditional,
-                CacheLength = TimeSpan.FromDays(1)
+                AcceptHeader = AcceptHeader
 
             }).ConfigureAwait(false))
             {
@@ -369,13 +367,13 @@ namespace MediaBrowser.Providers.Movies
         }
 
         private static long _lastRequestTicks;
+        private static int requestIntervalMs = 150;
 
         /// <summary>
         /// Gets the movie db response.
         /// </summary>
         internal async Task<Stream> GetMovieDbResponse(HttpRequestOptions options)
         {
-            var requestIntervalMs = 250;
             var delayTicks = (requestIntervalMs * 10000) - (DateTime.UtcNow.Ticks - _lastRequestTicks);
             var delayMs = Math.Min(delayTicks / 10000, requestIntervalMs);
 

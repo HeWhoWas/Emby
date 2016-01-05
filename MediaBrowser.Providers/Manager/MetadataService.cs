@@ -50,12 +50,6 @@ namespace MediaBrowser.Providers.Manager
         protected Task SaveProviderResult(TItemType item, MetadataStatus result, IDirectoryService directoryService)
         {
             result.ItemId = item.Id;
-            result.ItemName = item.Name;
-            result.ItemType = item.GetType().Name;
-
-            var series = item as IHasSeries;
-
-            result.SeriesName = series == null ? null : series.SeriesName;
 
             //var locationType = item.LocationType;
 
@@ -103,7 +97,7 @@ namespace MediaBrowser.Providers.Manager
             var itemImageProvider = new ItemImageProvider(Logger, ProviderManager, ServerConfigurationManager, FileSystem);
             var localImagesFailed = false;
 
-            var allImageProviders = ((ProviderManager)ProviderManager).GetImageProviders(item).ToList();
+			var allImageProviders = ((ProviderManager)ProviderManager).GetImageProviders(item, refreshOptions).ToList();
 
             // Start by validating images
             try
@@ -143,7 +137,7 @@ namespace MediaBrowser.Providers.Manager
                 {
                     var id = itemOfType.GetLookupInfo();
 
-                    await FindIdentities(id, cancellationToken).ConfigureAwait(false);
+                    //await FindIdentities(id, cancellationToken).ConfigureAwait(false);
 
                     var result = await RefreshWithProviders(metadataResult, id, refreshOptions, providers, itemImageProvider, cancellationToken).ConfigureAwait(false);
 
@@ -674,7 +668,14 @@ namespace MediaBrowser.Providers.Manager
         {
             try
             {
-                return changeMonitor.HasChanged(item, status, directoryService);
+                var hasChanged = changeMonitor.HasChanged(item, status, directoryService);
+
+                //if (hasChanged)
+                //{
+                //    Logger.Debug("{0} reports change to {1}", changeMonitor.GetType().Name, item.Path ?? item.Name);
+                //}
+
+                return hasChanged;
             }
             catch (Exception ex)
             {
@@ -687,7 +688,15 @@ namespace MediaBrowser.Providers.Manager
         {
             try
             {
-                return changeMonitor.HasChanged(item, directoryService, date);
+                var hasChanged = changeMonitor.HasChanged(item, directoryService, date);
+
+                //if (hasChanged)
+                //{
+                //    Logger.Debug("{0} reports change to {1} since {2}", changeMonitor.GetType().Name,
+                //        item.Path ?? item.Name, date);
+                //}
+
+                return hasChanged;
             }
             catch (Exception ex)
             {

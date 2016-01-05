@@ -41,11 +41,6 @@ namespace MediaBrowser.Server.Implementations.Intros
 
         public async Task<IEnumerable<IntroInfo>> GetIntros(BaseItem item, User user)
         {
-            if (!user.Configuration.EnableCinemaMode)
-            {
-                return new List<IntroInfo>();
-            }
-
             var config = GetOptions();
 
             if (item is Movie)
@@ -87,7 +82,7 @@ namespace MediaBrowser.Server.Implementations.Intros
                 {
                     IncludeItemTypes = new[] { typeof(Movie).Name }
 
-                }, user, new string[]{});
+                }, new string[]{});
 
                 var itemsWithTrailers = inputItems
                     .Where(i =>
@@ -166,7 +161,7 @@ namespace MediaBrowser.Server.Implementations.Intros
         private IEnumerable<IntroInfo> GetResult(BaseItem item, IEnumerable<ItemWithTrailer> candidates, CinemaModeConfiguration config, int? ratingLevel)
         {
             var customIntros = !string.IsNullOrWhiteSpace(config.CustomIntroPath) ?
-                GetCustomIntros(item) :
+                GetCustomIntros(config) :
                 new List<IntroInfo>();
 
             var trailerLimit = config.TrailerLimit;
@@ -215,11 +210,11 @@ namespace MediaBrowser.Server.Implementations.Intros
             return _serverConfig.GetConfiguration<CinemaModeConfiguration>("cinemamode");
         }
 
-        private List<IntroInfo> GetCustomIntros(BaseItem item)
+        private List<IntroInfo> GetCustomIntros(CinemaModeConfiguration options)
         {
             try
             {
-                return GetCustomIntroFiles()
+                return GetCustomIntroFiles(options, true, false)
                     .OrderBy(i => Guid.NewGuid())
                     .Select(i => new IntroInfo
                     {
@@ -233,17 +228,23 @@ namespace MediaBrowser.Server.Implementations.Intros
             }
         }
 
-        private IEnumerable<string> GetCustomIntroFiles(CinemaModeConfiguration options = null)
+        private IEnumerable<string> GetCustomIntroFiles(CinemaModeConfiguration options, bool enableCustomIntros, bool enableMediaInfoIntros)
         {
-            options = options ?? GetOptions();
+            var list = new List<string>();
 
-            if (string.IsNullOrWhiteSpace(options.CustomIntroPath))
+            if (enableCustomIntros && !string.IsNullOrWhiteSpace(options.CustomIntroPath))
             {
-                return new List<string>();
+                list.AddRange(_fileSystem.GetFilePaths(options.CustomIntroPath, true)
+                    .Where(_libraryManager.IsVideoFile));
             }
 
-            return _fileSystem.GetFilePaths(options.CustomIntroPath, true)
-                .Where(_libraryManager.IsVideoFile);
+            if (enableMediaInfoIntros && !string.IsNullOrWhiteSpace(options.MediaInfoIntroPath))
+            {
+                list.AddRange(_fileSystem.GetFilePaths(options.MediaInfoIntroPath, true)
+                    .Where(_libraryManager.IsVideoFile));
+            }
+
+            return list.Distinct(StringComparer.OrdinalIgnoreCase);
         }
 
         private bool FilterByParentalRating(int? ratingLevel, BaseItem item)
@@ -344,7 +345,7 @@ namespace MediaBrowser.Server.Implementations.Intros
 
         public IEnumerable<string> GetAllIntroFiles()
         {
-            return GetCustomIntroFiles();
+            return GetCustomIntroFiles(GetOptions(), true, true);
         }
 
         private bool IsSupporter

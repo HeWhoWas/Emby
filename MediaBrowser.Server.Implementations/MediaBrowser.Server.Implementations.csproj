@@ -48,9 +48,12 @@
     <Reference Include="Interfaces.IO">
       <HintPath>..\packages\Interfaces.IO.1.0.0.5\lib\portable-net45+sl4+wp71+win8+wpa81\Interfaces.IO.dll</HintPath>
     </Reference>
-    <Reference Include="MediaBrowser.Naming, Version=1.0.5748.36038, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="MediaBrowser.Naming, Version=1.0.5818.23111, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MediaBrowser.Naming.1.0.0.38\lib\portable-net45+sl4+wp71+win8+wpa81\MediaBrowser.Naming.dll</HintPath>
+      <HintPath>..\packages\MediaBrowser.Naming.1.0.0.41\lib\portable-net45+sl4+wp71+win8+wpa81\MediaBrowser.Naming.dll</HintPath>
+    </Reference>
+    <Reference Include="MoreLinq">
+      <HintPath>..\packages\morelinq.1.4.0\lib\net35\MoreLinq.dll</HintPath>
     </Reference>
     <Reference Include="Patterns.Logging">
       <HintPath>..\packages\Patterns.Logging.1.0.0.2\lib\portable-net45+sl4+wp71+win8+wpa81\Patterns.Logging.dll</HintPath>
@@ -58,9 +61,9 @@
     <Reference Include="ServiceStack.Api.Swagger">
       <HintPath>..\ThirdParty\ServiceStack\ServiceStack.Api.Swagger.dll</HintPath>
     </Reference>
-    <Reference Include="SocketHttpListener, Version=1.0.5788.28982, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SocketHttpListener, Version=1.0.5840.28948, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SocketHttpListener.1.0.0.15\lib\net45\SocketHttpListener.dll</HintPath>
+      <HintPath>..\packages\SocketHttpListener.1.0.0.25\lib\net45\SocketHttpListener.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,6 +73,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
@@ -94,9 +98,6 @@
     <Reference Include="Mono.Nat">
       <HintPath>..\packages\Mono.Nat.1.2.24.0\lib\net40\Mono.Nat.dll</HintPath>
     </Reference>
-    <Reference Include="MoreLinq">
-      <HintPath>..\packages\morelinq.1.1.1\lib\net35\MoreLinq.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\SharedVersion.cs">
@@ -120,9 +121,9 @@
     <Compile Include="Connect\ConnectManager.cs" />
     <Compile Include="Connect\Responses.cs" />
     <Compile Include="Connect\Validator.cs" />
-    <Compile Include="Devices\CameraUploadsFolder.cs" />
     <Compile Include="Devices\DeviceManager.cs" />
     <Compile Include="Devices\DeviceRepository.cs" />
+    <Compile Include="Devices\CameraUploadsFolder.cs" />
     <Compile Include="Dto\DtoService.cs" />
     <Compile Include="EntryPoints\ActivityLogEntryPoint.cs" />
     <Compile Include="EntryPoints\AutomaticRestartEntryPoint.cs" />
@@ -130,7 +131,6 @@
     <Compile Include="EntryPoints\LibraryChangedNotifier.cs" />
     <Compile Include="EntryPoints\LoadRegistrations.cs" />
     <Compile Include="EntryPoints\Notifications\Notifications.cs" />
-    <Compile Include="EntryPoints\Notifications\RemoteNotifications.cs" />
     <Compile Include="EntryPoints\Notifications\WebSocketNotifier.cs" />
     <Compile Include="EntryPoints\RefreshUsersMetadata.cs" />
     <Compile Include="EntryPoints\UsageEntryPoint.cs" />
@@ -161,6 +161,7 @@
     <Compile Include="HttpServer\ServerLogFactory.cs" />
     <Compile Include="HttpServer\ServerLogger.cs" />
     <Compile Include="HttpServer\Security\SessionContext.cs" />
+    <Compile Include="HttpServer\SocketSharp\HttpUtility.cs" />
     <Compile Include="HttpServer\SocketSharp\SharpWebSocket.cs" />
     <Compile Include="HttpServer\StreamWriter.cs" />
     <Compile Include="HttpServer\SwaggerService.cs" />
@@ -217,9 +218,6 @@
     <Compile Include="LiveTv\EmbyTV\RecordingHelper.cs" />
     <Compile Include="LiveTv\EmbyTV\SeriesTimerManager.cs" />
     <Compile Include="LiveTv\EmbyTV\TimerManager.cs" />
-    <Compile Include="LiveTv\Listings\Emby\EmbyListings.cs" />
-    <Compile Include="LiveTv\Listings\Emby\EmbyListingsNorthAmerica.cs" />
-    <Compile Include="LiveTv\Listings\Emby\IEmbyListingProvider.cs" />
     <Compile Include="LiveTv\Listings\SchedulesDirect.cs" />
     <Compile Include="LiveTv\Listings\XmlTv.cs" />
     <Compile Include="LiveTv\LiveTvConfigurationFactory.cs" />
@@ -409,6 +407,7 @@
     <EmbeddedResource Include="Localization\Core\zh-CN.json" />
     <EmbeddedResource Include="Localization\Core\zh-TW.json" />
     <EmbeddedResource Include="Localization\Core\zh-HK.json" />
+    <EmbeddedResource Include="Localization\Core\hu.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

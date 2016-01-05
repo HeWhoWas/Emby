@@ -11,8 +11,6 @@
 
         $('#selectLanguage', page).val(AppSettings.displayLanguage());
 
-        page.querySelector('.chkEnableFullScreen').checked = AppSettings.enableFullScreen();
-
         Dashboard.hideLoadingMsg();
     }
 
@@ -22,16 +20,22 @@
         user.Configuration.DisplayUnairedEpisodes = page.querySelector('.chkDisplayUnairedEpisodes').checked;
         user.Configuration.GroupMoviesIntoBoxSets = page.querySelector('.chkGroupMoviesIntoCollections').checked;
 
-        AppSettings.enableFullScreen(page.querySelector('.chkEnableFullScreen').checked);
         AppSettings.displayLanguage(page.querySelector('#selectLanguage').value);
 
         appStorage.setItem('enableThemeSongs-' + user.Id, $('#selectThemeSong', page).val());
         appStorage.setItem('enableBackdrops-' + user.Id, $('#selectBackdrop', page).val());
 
-        ApiClient.updateUserConfiguration(user.Id, user.Configuration).done(function () {
-            Dashboard.alert(Globalize.translate('SettingsSaved'));
+        ApiClient.updateUserConfiguration(user.Id, user.Configuration);
+    }
 
-            loadForm(page, user);
+    function save(page) {
+
+        var userId = getParameterByName('userId') || Dashboard.getCurrentUserId();
+
+        ApiClient.getUser(userId).then(function (user) {
+
+            saveUser(page, user);
+
         });
     }
 
@@ -39,27 +43,20 @@
 
         var page = $(this).parents('.page')[0];
 
-        Dashboard.showLoadingMsg();
-
-        var userId = getParameterByName('userId') || Dashboard.getCurrentUserId();
-
-        ApiClient.getUser(userId).done(function (user) {
-
-            saveUser(page, user);
-
-        });
+        save(page);
 
         // Disable default form submission
         return false;
     }
 
-    $(document).on('pageinit', "#displayPreferencesPage", function () {
+    pageIdOn('pageinit', "displayPreferencesPage", function () {
 
         var page = this;
 
         $('.displayPreferencesForm').off('submit', onSubmit).on('submit', onSubmit);
 
-    }).on('pageshow', "#displayPreferencesPage", function () {
+    });
+    pageIdOn('pageshow', "displayPreferencesPage", function () {
 
         var page = this;
 
@@ -67,7 +64,7 @@
 
         var userId = getParameterByName('userId') || Dashboard.getCurrentUserId();
 
-        ApiClient.getUser(userId).done(function (user) {
+        ApiClient.getUser(userId).then(function (user) {
 
             loadForm(page, user);
 
@@ -80,17 +77,19 @@
 
         $('.fldEnableBackdrops', page).show();
 
-        if (AppInfo.supportsFullScreen) {
-            $('.fldFullscreen', page).show();
-        } else {
-            $('.fldFullscreen', page).hide();
-        }
-
         if (AppInfo.supportsUserDisplayLanguageSetting) {
             $('.languageSection', page).show();
         } else {
             $('.languageSection', page).hide();
         }
+
+    });
+    pageIdOn('pagebeforehide', "displayPreferencesPage", function () {
+
+        var page = this;
+
+        save(page);
+
     });
 
 })(jQuery, window, document);

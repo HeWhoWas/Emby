@@ -14,7 +14,7 @@
                     url: ApiClient.getUrl('Sync/Jobs/' + id),
                     type: 'DELETE'
 
-                }).done(function () {
+                }).then(function () {
 
                     reloadData(page);
                 });
@@ -206,7 +206,6 @@
         }
 
         var elem = $('.syncActivity', page).html(html).lazyChildren();
-        Events.trigger(elem[0], 'create');
 
         $('.btnJobMenu', elem).on('click', function () {
             showJobMenu(page, this);
@@ -217,6 +216,14 @@
             elem.html('<div style="padding:1em .25em;">' + Globalize.translate('MessageNoSyncJobsFound') + '</div>');
         }
     }
+
+    $.fn.lazyChildren = function () {
+
+        for (var i = 0, length = this.length; i < length; i++) {
+            ImageLoader.lazyChildren(this[i]);
+        }
+        return this;
+    };
 
     function refreshData(page, jobs) {
 
@@ -315,7 +322,7 @@
 
         var options = {};
 
-        Dashboard.getCurrentUser().done(function (user) {
+        Dashboard.getCurrentUser().then(function (user) {
 
             if ($(page).hasClass('mySyncPage')) {
                 options.UserId = Dashboard.getCurrentUserId();
@@ -325,7 +332,7 @@
                 }
             }
 
-            ApiClient.getJSON(ApiClient.getUrl('Sync/Jobs', options)).done(function (response) {
+            ApiClient.getJSON(ApiClient.getUrl('Sync/Jobs', options)).then(function (response) {
 
                 loadData(page, response.Items);
                 Dashboard.hideLoadingMsg();
@@ -380,9 +387,8 @@
 
         $('.btnSyncSupporter', page).on('click', function () {
 
-            requirejs(["scripts/registrationservices"], function () {
-                RegistrationServices.validateFeature('sync').done(function () {
-                });
+            requirejs(["registrationservices"], function () {
+                RegistrationServices.validateFeature('sync');
             });
         });
         $('.supporterPromotion .mainText', page).html(Globalize.translate('HeaderSyncRequiresSupporterMembership'));
@@ -391,7 +397,7 @@
 
         var page = this;
 
-        Dashboard.getPluginSecurityInfo().done(function (pluginSecurityInfo) {
+        Dashboard.getPluginSecurityInfo().then(function (pluginSecurityInfo) {
 
             if (pluginSecurityInfo.IsMBSupporter) {
                 $('.supporterPromotionContainer', page).hide();
@@ -410,7 +416,7 @@
         });
 
         startListening(page);
-        $(ApiClient).on("websocketmessage", onWebSocketMessage);
+        Events.on(ApiClient, "websocketmessage", onWebSocketMessage);
 
     }).on('pagebeforehide', ".syncActivityPage", function () {
 
@@ -422,7 +428,7 @@
         });
 
         stopListening();
-        $(ApiClient).off("websocketmessage", onWebSocketMessage);
+        Events.off(ApiClient, "websocketmessage", onWebSocketMessage);
     });
 
 })();

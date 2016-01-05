@@ -41,7 +41,7 @@ namespace MediaBrowser.Server.Implementations.Library
             item.Id = libraryManager.GetNewItemId(item.Path, item.GetType());
 
             item.IsLocked = item.Path.IndexOf("[dontfetchmeta]", StringComparison.OrdinalIgnoreCase) != -1 ||
-                item.Parents.Any(i => i.IsLocked);
+                item.GetParents().Any(i => i.IsLocked);
 
             // Make sure DateCreated and DateModified have values
             var fileInfo = directoryService.GetFile(item.Path);
@@ -78,7 +78,7 @@ namespace MediaBrowser.Server.Implementations.Library
             EnsureName(item, args.FileInfo);
 
             item.IsLocked = item.Path.IndexOf("[dontfetchmeta]", StringComparison.OrdinalIgnoreCase) != -1 ||
-                item.Parents.Any(i => i.IsLocked);
+                item.GetParents().Any(i => i.IsLocked);
 
             // Make sure DateCreated and DateModified have values
             EnsureDates(fileSystem, item, args, true);
@@ -94,7 +94,7 @@ namespace MediaBrowser.Server.Implementations.Library
             // If the subclass didn't supply a name, add it here
             if (string.IsNullOrEmpty(item.Name) && !string.IsNullOrEmpty(item.Path))
             {
-                item.Name = GetDisplayName(fileInfo.Name, (fileInfo.Attributes & FileAttributes.Directory) == FileAttributes.Directory);
+                item.Name = GetDisplayName(fileInfo.Name, fileInfo.IsDirectory);
             }
         }
 
